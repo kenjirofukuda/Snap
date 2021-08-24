@@ -3105,7 +3105,7 @@ enableRetinaSupport();
 // var Morph;
 var WorldMorph;
 var HandMorph;
-var ShadowMorph;
+// var ShadowMorph;
 var FrameMorph;
 var MenuMorph;
 var HandleMorph;
@@ -4681,28 +4681,28 @@ var TextMorph;
 //     ];
 // };
 
-// ShadowMorph /////////////////////////////////////////////////////////
+// // ShadowMorph /////////////////////////////////////////////////////////
 
-// ShadowMorph inherits from Morph:
+// // ShadowMorph inherits from Morph:
 
-ShadowMorph.prototype = new Morph();
-ShadowMorph.prototype.constructor = ShadowMorph;
-ShadowMorph.uber = Morph.prototype;
+// ShadowMorph.prototype = new Morph();
+// ShadowMorph.prototype.constructor = ShadowMorph;
+// ShadowMorph.uber = Morph.prototype;
 
-// ShadowMorph instance creation:
+// // ShadowMorph instance creation:
 
-function ShadowMorph() {
-    this.init();
-}
+// function ShadowMorph() {
+//     this.init();
+// }
 
-ShadowMorph.prototype.init = function () {
-    ShadowMorph.uber.init.call(this);
-    this.isCachingImage = true;
-};
+// ShadowMorph.prototype.init = function () {
+//     ShadowMorph.uber.init.call(this);
+//     this.isCachingImage = true;
+// };
 
-ShadowMorph.prototype.topMorphAt = function () {
-    return null;
-};
+// ShadowMorph.prototype.topMorphAt = function () {
+//     return null;
+// };
 
 // HandleMorph ////////////////////////////////////////////////////////
 

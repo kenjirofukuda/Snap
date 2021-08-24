@@ -14,16 +14,15 @@
 
 class BlinkerMorph extends Morph {
     constructor(rate) {
-        super()
+        this.init(rate)
+    }
+    
+    init(rate) {
+        Morph.prototype.init.call(this);
         this.color = new Color(0, 0, 0);
         this.fps = rate || 2;
     }
-    
-    // init(rate) {
-    //     super.init();
-    //     this.color = new Color(0, 0, 0);
-    //     this.fps = rate || 2;
-    // }
+
     // BlinkerMorph stepping:
     step() {
         this.toggleVisibility();

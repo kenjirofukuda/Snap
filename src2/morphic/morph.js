@@ -7,14 +7,14 @@ var WorldMorph;
 var HandMorph;
 // var ShadowMorph;
 var FrameMorph;
-// var MenuMorph;
-// var HandleMorph;
+var MenuMorph;
+var HandleMorph;
 var StringFieldMorph;
-// var ckerMorph;
+var ColorPickerMorph;
 var SliderMorph;
 var ScrollFrameMorph;
 var InspectorMorph;
-// var StringMorph;
+var StringMorph;
 var TextMorph;
 
 // Morph inherits from Node:
@@ -34,32 +34,11 @@ class Morph extends Node {
 
     constructor(parent, childrenArray) {
         super(parent, childrenArray)
-        this.isMorph = true; // used to optimize deep copying
-        this.cachedImage = null;
-        this.isCachingImage = false;
-        this.shouldRerender = false;
-        this.bounds = new Rectangle(0, 0, 50, 40);
-        this.holes = []; // list of "untouchable" regions (rectangles)
-        this.color = new Color(80, 80, 80);
-        this.texture = null; // optional url of a fill-image
-        this.cachedTexture = null; // internal cache of actual bg image
-        this.alpha = 1;
-        this.isVisible = true;
-        this.isDraggable = false;
-        this.isTemplate = false;
-        this.acceptsDrops = false;
-        this.isFreeForm = false;
-        this.noDropShadow = false;
-        this.fullShadowSource = true;
-        this.fps = 0;
-        this.customContextMenu = null;
-        this.lastTime = Date.now();
-        this.onNextStep = null; // optional function to be run once
+        Morph.prototype.init.call(this); // temporary
     }
 
     // Morph initialization:
     init() {
-        console.log("Morph>>init")
         super.init();
         this.isMorph = true; // used to optimize deep copying
         this.cachedImage = null;

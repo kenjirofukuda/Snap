@@ -11,10 +11,9 @@
 class ShadowMorph extends Morph {
     constructor() {
         super()
-        this.init();
+        ShadowMorph.prototype.init.call(this); // temporary
     }
     init() {
-        super.init();
         this.isCachingImage = true;
     }
     topMorphAt() {

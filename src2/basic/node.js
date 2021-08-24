@@ -3,11 +3,10 @@
 // Node instance creation:
 
 class Node {
-    constructor(parent, childrenArray) {
-        this.init();
+    constructor(parent, childrenArray) {        
+        Node.prototype.init.call(this); // temporary
     }
     init(parent, childrenArray) {
-        console.log("Node>>init")
         this.parent = parent || null;
         this.children = childrenArray || [];
     }
