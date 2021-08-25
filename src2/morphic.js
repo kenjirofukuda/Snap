@@ -1296,7 +1296,17 @@ var modules = {}; // keep track of additional loaded modules
 var useBlurredShadows = true;
 
 const ZERO = new Point();
+
+/** 
+ * @constant 
+ * @type {Color} 
+ */
 const BLACK = new Color();
+
+/** 
+ * @constant 
+ * @type {Color} 
+ */
 const WHITE = new Color(255, 255, 255);
 const CLEAR = new Color(0, 0, 0, 0);
 
@@ -6668,341 +6678,341 @@ DialMorph.prototype.updateTarget = function () {
     }
 };
 
-// CircleBoxMorph //////////////////////////////////////////////////////
+// // CircleBoxMorph //////////////////////////////////////////////////////
 
-// I can be used for sliders
+// // I can be used for sliders
 
-var CircleBoxMorph;
+// var CircleBoxMorph;
 
-// CircleBoxMorph inherits from Morph:
+// // CircleBoxMorph inherits from Morph:
 
-CircleBoxMorph.prototype = new Morph();
-CircleBoxMorph.prototype.constructor = CircleBoxMorph;
-CircleBoxMorph.uber = Morph.prototype;
+// CircleBoxMorph.prototype = new Morph();
+// CircleBoxMorph.prototype.constructor = CircleBoxMorph;
+// CircleBoxMorph.uber = Morph.prototype;
 
-function CircleBoxMorph(orientation) {
-    this.init(orientation || 'vertical');
-}
+// function CircleBoxMorph(orientation) {
+//     this.init(orientation || 'vertical');
+// }
 
-CircleBoxMorph.prototype.init = function (orientation) {
-    CircleBoxMorph.uber.init.call(this);
-    this.orientation = orientation;
-    this.autoOrient = true;
-    this.setExtent(new Point(20, 100));
-};
+// CircleBoxMorph.prototype.init = function (orientation) {
+//     CircleBoxMorph.uber.init.call(this);
+//     this.orientation = orientation;
+//     this.autoOrient = true;
+//     this.setExtent(new Point(20, 100));
+// };
 
-CircleBoxMorph.prototype.autoOrientation = function () {
-    if (this.height() > this.width()) {
-        this.orientation = 'vertical';
-    } else {
-        this.orientation = 'horizontal';
-    }
-};
+// CircleBoxMorph.prototype.autoOrientation = function () {
+//     if (this.height() > this.width()) {
+//         this.orientation = 'vertical';
+//     } else {
+//         this.orientation = 'horizontal';
+//     }
+// };
 
-CircleBoxMorph.prototype.render = function (ctx) {
-    var w = this.width(),
-        h = this.height(),
-        radius;
+// CircleBoxMorph.prototype.render = function (ctx) {
+//     var w = this.width(),
+//         h = this.height(),
+//         radius;
 
-    if (this.autoOrient) {
-        this.autoOrientation();
-    }
+//     if (this.autoOrient) {
+//         this.autoOrientation();
+//     }
 
-    if (this.orientation === 'vertical') {
-        radius = w / 2;
-        ctx.beginPath();
+//     if (this.orientation === 'vertical') {
+//         radius = w / 2;
+//         ctx.beginPath();
 
-        // top semi-circle
-        ctx.arc(
-            radius,
-            radius,
-            radius,
-            radians(180),
-            radians(0),
-            false
-        );
+//         // top semi-circle
+//         ctx.arc(
+//             radius,
+//             radius,
+//             radius,
+//             radians(180),
+//             radians(0),
+//             false
+//         );
 
-        // right line
-        ctx.lineTo(
-            w,
-            h - radius
-        );
+//         // right line
+//         ctx.lineTo(
+//             w,
+//             h - radius
+//         );
 
-        // bottom semi-circle
-        ctx.arc(
-            radius,
-            h - radius,
-            radius,
-            radians(0),
-            radians(180),
-            false
-        );
+//         // bottom semi-circle
+//         ctx.arc(
+//             radius,
+//             h - radius,
+//             radius,
+//             radians(0),
+//             radians(180),
+//             false
+//         );
 
-    } else {
-        radius = h / 2;
-        ctx.beginPath();
+//     } else {
+//         radius = h / 2;
+//         ctx.beginPath();
 
-        // left semi-circle
-        ctx.arc(
-            radius,
-            radius,
-            radius,
-            radians(90),
-            radians(-90),
-            false
-        );
+//         // left semi-circle
+//         ctx.arc(
+//             radius,
+//             radius,
+//             radius,
+//             radians(90),
+//             radians(-90),
+//             false
+//         );
 
-        // top line
-        ctx.lineTo(
-            w - radius,
-            0
-        );
+//         // top line
+//         ctx.lineTo(
+//             w - radius,
+//             0
+//         );
 
-        // right semi-circle
-        ctx.arc(
-            w - radius,
-            radius,
-            radius,
-            radians(-90),
-            radians(90),
-            false
-        );
-    }
-    ctx.closePath();
-    ctx.fillStyle = this.color.toString();
-    ctx.fill();
-};
+//         // right semi-circle
+//         ctx.arc(
+//             w - radius,
+//             radius,
+//             radius,
+//             radians(-90),
+//             radians(90),
+//             false
+//         );
+//     }
+//     ctx.closePath();
+//     ctx.fillStyle = this.color.toString();
+//     ctx.fill();
+// };
 
-// CircleBoxMorph menu:
+// // CircleBoxMorph menu:
 
-CircleBoxMorph.prototype.developersMenu = function () {
-    var menu = CircleBoxMorph.uber.developersMenu.call(this);
-    menu.addLine();
-    if (this.orientation === 'vertical') {
-        menu.addItem(
-            "horizontal...",
-            'toggleOrientation',
-            'toggle the\norientation'
-        );
-    } else {
-        menu.addItem(
-            "vertical...",
-            'toggleOrientation',
-            'toggle the\norientation'
-        );
-    }
-    return menu;
-};
+// CircleBoxMorph.prototype.developersMenu = function () {
+//     var menu = CircleBoxMorph.uber.developersMenu.call(this);
+//     menu.addLine();
+//     if (this.orientation === 'vertical') {
+//         menu.addItem(
+//             "horizontal...",
+//             'toggleOrientation',
+//             'toggle the\norientation'
+//         );
+//     } else {
+//         menu.addItem(
+//             "vertical...",
+//             'toggleOrientation',
+//             'toggle the\norientation'
+//         );
+//     }
+//     return menu;
+// };
 
-CircleBoxMorph.prototype.toggleOrientation = function () {
-    var center = this.center();
-    this.changed();
-    if (this.orientation === 'vertical') {
-        this.orientation = 'horizontal';
-    } else {
-        this.orientation = 'vertical';
-    }
-    this.setExtent(new Point(this.height(), this.width()));
-    this.setCenter(center);
-};
+// CircleBoxMorph.prototype.toggleOrientation = function () {
+//     var center = this.center();
+//     this.changed();
+//     if (this.orientation === 'vertical') {
+//         this.orientation = 'horizontal';
+//     } else {
+//         this.orientation = 'vertical';
+//     }
+//     this.setExtent(new Point(this.height(), this.width()));
+//     this.setCenter(center);
+// };
 
-// SliderButtonMorph ///////////////////////////////////////////////////
+// // SliderButtonMorph ///////////////////////////////////////////////////
 
-var SliderButtonMorph;
+// var SliderButtonMorph;
 
-// SliderButtonMorph inherits from CircleBoxMorph:
+// // SliderButtonMorph inherits from CircleBoxMorph:
 
-SliderButtonMorph.prototype = new CircleBoxMorph();
-SliderButtonMorph.prototype.constructor = SliderButtonMorph;
-SliderButtonMorph.uber = CircleBoxMorph.prototype;
+// SliderButtonMorph.prototype = new CircleBoxMorph();
+// SliderButtonMorph.prototype.constructor = SliderButtonMorph;
+// SliderButtonMorph.uber = CircleBoxMorph.prototype;
 
-function SliderButtonMorph(orientation) {
-    this.init(orientation);
-}
+// function SliderButtonMorph(orientation) {
+//     this.init(orientation);
+// }
 
-SliderButtonMorph.prototype.init = function (orientation) {
-    this.color = new Color(80, 80, 80);
-    this.highlightColor = new Color(90, 90, 140);
-    this.pressColor = new Color(80, 80, 160);
-    this.userState = 'normal'; // 'highlight', 'pressed'
-    this.is3D = false;
-    this.hasMiddleDip = true;
-    SliderButtonMorph.uber.init.call(this, orientation);
-};
+// SliderButtonMorph.prototype.init = function (orientation) {
+//     this.color = new Color(80, 80, 80);
+//     this.highlightColor = new Color(90, 90, 140);
+//     this.pressColor = new Color(80, 80, 160);
+//     this.userState = 'normal'; // 'highlight', 'pressed'
+//     this.is3D = false;
+//     this.hasMiddleDip = true;
+//     SliderButtonMorph.uber.init.call(this, orientation);
+// };
 
-SliderButtonMorph.prototype.autoOrientation = nop;
+// SliderButtonMorph.prototype.autoOrientation = nop;
 
-SliderButtonMorph.prototype.render = function (ctx) {
-    var colorBak = this.color;
-    if (this.userState === 'highlight') {
-        this.color = this.highlightColor;
-    } else if (this.userState === 'pressed') {
-        this.color = this.pressColor;
-    }
-    SliderButtonMorph.uber.render.call(this, ctx);
-    if (this.is3D || !MorphicPreferences.isFlat) {
-        this.renderEdges(ctx);
-    }
-    this.color = colorBak;
-};
+// SliderButtonMorph.prototype.render = function (ctx) {
+//     var colorBak = this.color;
+//     if (this.userState === 'highlight') {
+//         this.color = this.highlightColor;
+//     } else if (this.userState === 'pressed') {
+//         this.color = this.pressColor;
+//     }
+//     SliderButtonMorph.uber.render.call(this, ctx);
+//     if (this.is3D || !MorphicPreferences.isFlat) {
+//         this.renderEdges(ctx);
+//     }
+//     this.color = colorBak;
+// };
 
-SliderButtonMorph.prototype.renderEdges = function (ctx) {
-    var gradient,
-        radius,
-        w = this.width(),
-        h = this.height();
+// SliderButtonMorph.prototype.renderEdges = function (ctx) {
+//     var gradient,
+//         radius,
+//         w = this.width(),
+//         h = this.height();
 
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
+//     ctx.lineJoin = 'round';
+//     ctx.lineCap = 'round';
 
-    if (this.orientation === 'vertical') {
-        ctx.lineWidth = w / 3;
-        gradient = ctx.createLinearGradient(
-            0,
-            0,
-            ctx.lineWidth,
-            0
-        );
-        gradient.addColorStop(0, 'white');
-        gradient.addColorStop(1, this.color.toString());
+//     if (this.orientation === 'vertical') {
+//         ctx.lineWidth = w / 3;
+//         gradient = ctx.createLinearGradient(
+//             0,
+//             0,
+//             ctx.lineWidth,
+//             0
+//         );
+//         gradient.addColorStop(0, 'white');
+//         gradient.addColorStop(1, this.color.toString());
 
-        ctx.strokeStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(ctx.lineWidth * 0.5, w / 2);
-        ctx.lineTo(ctx.lineWidth * 0.5, h - w / 2);
-        ctx.stroke();
+//         ctx.strokeStyle = gradient;
+//         ctx.beginPath();
+//         ctx.moveTo(ctx.lineWidth * 0.5, w / 2);
+//         ctx.lineTo(ctx.lineWidth * 0.5, h - w / 2);
+//         ctx.stroke();
 
-        gradient = ctx.createLinearGradient(
-            w - ctx.lineWidth,
-            0,
-            w,
-            0
-        );
-        gradient.addColorStop(0, this.color.toString());
-        gradient.addColorStop(1, 'black');
+//         gradient = ctx.createLinearGradient(
+//             w - ctx.lineWidth,
+//             0,
+//             w,
+//             0
+//         );
+//         gradient.addColorStop(0, this.color.toString());
+//         gradient.addColorStop(1, 'black');
 
-        ctx.strokeStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(w - ctx.lineWidth * 0.5, w / 2);
-        ctx.lineTo(w - ctx.lineWidth * 0.5, h - w / 2);
-        ctx.stroke();
+//         ctx.strokeStyle = gradient;
+//         ctx.beginPath();
+//         ctx.moveTo(w - ctx.lineWidth * 0.5, w / 2);
+//         ctx.lineTo(w - ctx.lineWidth * 0.5, h - w / 2);
+//         ctx.stroke();
 
-        if (this.hasMiddleDip) {
-            gradient = ctx.createLinearGradient(
-                ctx.lineWidth,
-                0,
-                w - ctx.lineWidth,
-                0
-            );
+//         if (this.hasMiddleDip) {
+//             gradient = ctx.createLinearGradient(
+//                 ctx.lineWidth,
+//                 0,
+//                 w - ctx.lineWidth,
+//                 0
+//             );
 
-            radius = w / 4;
-            gradient.addColorStop(0, 'black');
-            gradient.addColorStop(0.35, this.color.toString());
-            gradient.addColorStop(0.65, this.color.toString());
-            gradient.addColorStop(1, 'white');
+//             radius = w / 4;
+//             gradient.addColorStop(0, 'black');
+//             gradient.addColorStop(0.35, this.color.toString());
+//             gradient.addColorStop(0.65, this.color.toString());
+//             gradient.addColorStop(1, 'white');
 
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(
-                w / 2,
-                h / 2,
-                radius,
-                radians(0),
-                radians(360),
-                false
-            );
-            ctx.closePath();
-            ctx.fill();
-        }
-    } else if (this.orientation === 'horizontal') {
-        ctx.lineWidth = h / 3;
-        gradient = ctx.createLinearGradient(
-            0,
-            0,
-            0,
-            ctx.lineWidth
-        );
-        gradient.addColorStop(0, 'white');
-        gradient.addColorStop(1, this.color.toString());
+//             ctx.fillStyle = gradient;
+//             ctx.beginPath();
+//             ctx.arc(
+//                 w / 2,
+//                 h / 2,
+//                 radius,
+//                 radians(0),
+//                 radians(360),
+//                 false
+//             );
+//             ctx.closePath();
+//             ctx.fill();
+//         }
+//     } else if (this.orientation === 'horizontal') {
+//         ctx.lineWidth = h / 3;
+//         gradient = ctx.createLinearGradient(
+//             0,
+//             0,
+//             0,
+//             ctx.lineWidth
+//         );
+//         gradient.addColorStop(0, 'white');
+//         gradient.addColorStop(1, this.color.toString());
 
-        ctx.strokeStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(h / 2, ctx.lineWidth * 0.5);
-        ctx.lineTo(w - h / 2, ctx.lineWidth * 0.5);
-        ctx.stroke();
+//         ctx.strokeStyle = gradient;
+//         ctx.beginPath();
+//         ctx.moveTo(h / 2, ctx.lineWidth * 0.5);
+//         ctx.lineTo(w - h / 2, ctx.lineWidth * 0.5);
+//         ctx.stroke();
 
-        gradient = ctx.createLinearGradient(
-            0,
-            h - ctx.lineWidth,
-            0,
-            h
-        );
-        gradient.addColorStop(0, this.color.toString());
-        gradient.addColorStop(1, 'black');
+//         gradient = ctx.createLinearGradient(
+//             0,
+//             h - ctx.lineWidth,
+//             0,
+//             h
+//         );
+//         gradient.addColorStop(0, this.color.toString());
+//         gradient.addColorStop(1, 'black');
 
-        ctx.strokeStyle = gradient;
-        ctx.beginPath();
-        ctx.moveTo(h / 2, h - ctx.lineWidth * 0.5);
-        ctx.lineTo(w - h / 2, h - ctx.lineWidth * 0.5);
-        ctx.stroke();
+//         ctx.strokeStyle = gradient;
+//         ctx.beginPath();
+//         ctx.moveTo(h / 2, h - ctx.lineWidth * 0.5);
+//         ctx.lineTo(w - h / 2, h - ctx.lineWidth * 0.5);
+//         ctx.stroke();
 
-        if (this.hasMiddleDip) {
-            gradient = ctx.createLinearGradient(
-                0,
-                ctx.lineWidth,
-                0,
-                h - ctx.lineWidth
-            );
+//         if (this.hasMiddleDip) {
+//             gradient = ctx.createLinearGradient(
+//                 0,
+//                 ctx.lineWidth,
+//                 0,
+//                 h - ctx.lineWidth
+//             );
 
-            radius = h / 4;
-            gradient.addColorStop(0, 'black');
-            gradient.addColorStop(0.35, this.color.toString());
-            gradient.addColorStop(0.65, this.color.toString());
-            gradient.addColorStop(1, 'white');
+//             radius = h / 4;
+//             gradient.addColorStop(0, 'black');
+//             gradient.addColorStop(0.35, this.color.toString());
+//             gradient.addColorStop(0.65, this.color.toString());
+//             gradient.addColorStop(1, 'white');
 
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(
-                this.width() / 2,
-                this.height() / 2,
-                radius,
-                radians(0),
-                radians(360),
-                false
-            );
-            ctx.closePath();
-            ctx.fill();
-        }
-    }
-};
+//             ctx.fillStyle = gradient;
+//             ctx.beginPath();
+//             ctx.arc(
+//                 this.width() / 2,
+//                 this.height() / 2,
+//                 radius,
+//                 radians(0),
+//                 radians(360),
+//                 false
+//             );
+//             ctx.closePath();
+//             ctx.fill();
+//         }
+//     }
+// };
 
-//SliderButtonMorph events:
+// //SliderButtonMorph events:
 
-SliderButtonMorph.prototype.mouseEnter = function () {
-    this.userState = 'highlight';
-    this.rerender();
-};
+// SliderButtonMorph.prototype.mouseEnter = function () {
+//     this.userState = 'highlight';
+//     this.rerender();
+// };
 
-SliderButtonMorph.prototype.mouseLeave = function () {
-    this.userState = 'normal';
-    this.rerender();
-};
+// SliderButtonMorph.prototype.mouseLeave = function () {
+//     this.userState = 'normal';
+//     this.rerender();
+// };
 
-SliderButtonMorph.prototype.mouseDownLeft = function (pos) {
-    this.userState = 'pressed';
-    this.rerender();
-    this.escalateEvent('mouseDownLeft', pos);
-};
+// SliderButtonMorph.prototype.mouseDownLeft = function (pos) {
+//     this.userState = 'pressed';
+//     this.rerender();
+//     this.escalateEvent('mouseDownLeft', pos);
+// };
 
-SliderButtonMorph.prototype.mouseClickLeft = function () {
-    this.userState = 'highlight';
-    this.rerender();
-};
+// SliderButtonMorph.prototype.mouseClickLeft = function () {
+//     this.userState = 'highlight';
+//     this.rerender();
+// };
 
-SliderButtonMorph.prototype.mouseMove = function () {
-    // prevent my parent from getting picked up
-    nop();
-};
+// SliderButtonMorph.prototype.mouseMove = function () {
+//     // prevent my parent from getting picked up
+//     nop();
+// };
 
 // SliderMorph ///////////////////////////////////////////////////
 

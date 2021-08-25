@@ -1,17 +1,7 @@
-// BoxMorph ////////////////////////////////////////////////////////////
-
-// I can have an optionally rounded border
-
-// var BoxMorph;
-
-// // BoxMorph inherits from Morph:
-
-// BoxMorph.prototype = new Morph();
-// ;
-// BoxMorph.uber = Morph.prototype;
-
-// BoxMorph instance creation:
-
+/** 
+ * I can have an optionally rounded border 
+ * @extends Morph
+ */
 class BoxMorph extends Morph {
     constructor(edge, border, borderColor) {
         super()

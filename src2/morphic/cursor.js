@@ -1,23 +1,7 @@
-// CursorMorph /////////////////////////////////////////////////////////
-
-// I am a String/Text editing widget
-
-// CursorMorph: referenced constructors
-
-// var CursorMorph;
-
-// CursorMorph inherits from BlinkerMorph:
-
-// CursorMorph.prototype = new BlinkerMorph();
-// ;
-// CursorMorph.uber = BlinkerMorph.prototype;
-
-// CursorMorph preferences settings:
-
-// CursorMorph.prototype.viewPadding = 1;
-
-// CursorMorph instance creation:
-
+/** 
+ * I am a String/Text editing widge
+ * @extends BlinkerMorph
+ */
 class CursorMorph extends BlinkerMorph {
     constructor(aStringOrTextMorph, aTextarea) {
         super()

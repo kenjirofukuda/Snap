@@ -1,7 +1,7 @@
-// BlinkerMorph ////////////////////////////////////////////////////////
-
-// can be used for text cursors
-
+/** 
+ * can be used for text cursors
+ * @extends Morph
+ */
 class BlinkerMorph extends Morph {
     constructor(rate) {
         super()

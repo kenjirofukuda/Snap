@@ -1,13 +1,3 @@
-// SliderButtonMorph ///////////////////////////////////////////////////
-
-// var SliderButtonMorph;
-
-// SliderButtonMorph inherits from CircleBoxMorph:
-
-// SliderButtonMorph.prototype = new CircleBoxMorph();
-// ;
-// super = CircleBoxMorph.prototype;
-
 class SliderButtonMorph extends CircleBoxMorph {
     constructor(orientation) {
         super(orientation);
@@ -185,12 +175,4 @@ class SliderButtonMorph extends CircleBoxMorph {
     }
 }
 
-
 SliderButtonMorph.prototype.autoOrientation = nop;
-
-
-
-
-
-
-

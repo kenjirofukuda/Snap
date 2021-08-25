@@ -1,28 +1,21 @@
-// CircleBoxMorph //////////////////////////////////////////////////////
-
-// I can be used for sliders
-
-// var CircleBoxMorph;
-
-// // CircleBoxMorph inherits from Morph:
-
-// CircleBoxMorph.prototype = new Morph();
-// ;
-// super = Morph.prototype;
-
+/** 
+ * I can be used for slider
+ * @extends Morph
+ */
 class CircleBoxMorph extends Morph {
     constructor(orientation) {
-        super()
-        this.orientation =  orientation || 'virtical';
+        super();
+        CircleBoxMorph.prototype.init.call(this, orientation);
+    }
+    /** 
+     * @param orientation {string} 'virtical' || 'horizontal' 
+     */
+    init(orientation) { 
+        super.init();
+        this.orientation = orientation || 'virtical';
         this.autoOrient = true;
         this.setExtent(new Point(20, 100));
     }
-    // init(orientation) {
-    //     super.init();
-    //     this.orientation = orientation;
-    //     this.autoOrient = true;
-    //     this.setExtent(new Point(20, 100));
-    // }
     autoOrientation() {
         if (this.height() > this.width()) {
             this.orientation = 'vertical';
