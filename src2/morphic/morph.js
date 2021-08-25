@@ -7,7 +7,7 @@ var WorldMorph;
 var HandMorph;
 // var ShadowMorph;
 var FrameMorph;
-var MenuMorph;
+// var MenuMorph;
 var HandleMorph;
 var StringFieldMorph;
 var ColorPickerMorph;

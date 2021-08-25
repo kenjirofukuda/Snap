@@ -3107,7 +3107,7 @@ var WorldMorph;
 var HandMorph;
 // var ShadowMorph;
 var FrameMorph;
-var MenuMorph;
+// var MenuMorph;
 var HandleMorph;
 var StringFieldMorph;
 var ColorPickerMorph;
@@ -5834,200 +5834,200 @@ ColorPickerMorph.prototype.rootForGrab = function () {
 //     this.target.world().resetKeyboardHandler();
 // };
 
-// BoxMorph ////////////////////////////////////////////////////////////
+// // BoxMorph ////////////////////////////////////////////////////////////
 
-// I can have an optionally rounded border
+// // I can have an optionally rounded border
 
-var BoxMorph;
+// var BoxMorph;
 
-// BoxMorph inherits from Morph:
+// // BoxMorph inherits from Morph:
 
-BoxMorph.prototype = new Morph();
-BoxMorph.prototype.constructor = BoxMorph;
-BoxMorph.uber = Morph.prototype;
+// BoxMorph.prototype = new Morph();
+// BoxMorph.prototype.constructor = BoxMorph;
+// BoxMorph.uber = Morph.prototype;
 
-// BoxMorph instance creation:
+// // BoxMorph instance creation:
 
-function BoxMorph(edge, border, borderColor) {
-    this.init(edge, border, borderColor);
-}
+// function BoxMorph(edge, border, borderColor) {
+//     this.init(edge, border, borderColor);
+// }
 
-BoxMorph.prototype.init = function (edge, border, borderColor) {
-    this.edge = edge || 4;
-    this.border = border || ((border === 0) ? 0 : 2);
-    this.borderColor = borderColor || BLACK;
-    BoxMorph.uber.init.call(this);
-};
+// BoxMorph.prototype.init = function (edge, border, borderColor) {
+//     this.edge = edge || 4;
+//     this.border = border || ((border === 0) ? 0 : 2);
+//     this.borderColor = borderColor || BLACK;
+//     BoxMorph.uber.init.call(this);
+// };
 
-// BoxMorph drawing:
+// // BoxMorph drawing:
 
-BoxMorph.prototype.render = function (ctx) {
-    if ((this.edge === 0) && (this.border === 0)) {
-        BoxMorph.uber.render.call(this, ctx);
-        return;
-    }
-    ctx.fillStyle = this.color.toString();
-    ctx.beginPath();
-    this.outlinePath(
-        ctx,
-        Math.max(this.edge - this.border, 0),
-        this.border
-    );
-    ctx.closePath();
-    ctx.fill();
-    if (this.border > 0) {
-        ctx.lineWidth = this.border;
-        ctx.strokeStyle = this.borderColor.toString();
-        ctx.beginPath();
-        this.outlinePath(ctx, this.edge, this.border / 2);
-        ctx.closePath();
-        ctx.stroke();
-    }
-};
+// BoxMorph.prototype.render = function (ctx) {
+//     if ((this.edge === 0) && (this.border === 0)) {
+//         BoxMorph.uber.render.call(this, ctx);
+//         return;
+//     }
+//     ctx.fillStyle = this.color.toString();
+//     ctx.beginPath();
+//     this.outlinePath(
+//         ctx,
+//         Math.max(this.edge - this.border, 0),
+//         this.border
+//     );
+//     ctx.closePath();
+//     ctx.fill();
+//     if (this.border > 0) {
+//         ctx.lineWidth = this.border;
+//         ctx.strokeStyle = this.borderColor.toString();
+//         ctx.beginPath();
+//         this.outlinePath(ctx, this.edge, this.border / 2);
+//         ctx.closePath();
+//         ctx.stroke();
+//     }
+// };
 
-BoxMorph.prototype.outlinePath = function (ctx, corner, inset) {
-    var w = this.width(),
-        h = this.height(),
-        radius = Math.min(corner, (Math.min(w, h) - inset) / 2),
-        offset = radius + inset;
+// BoxMorph.prototype.outlinePath = function (ctx, corner, inset) {
+//     var w = this.width(),
+//         h = this.height(),
+//         radius = Math.min(corner, (Math.min(w, h) - inset) / 2),
+//         offset = radius + inset;
 
-    // top left:
-    ctx.arc(
-        offset,
-        offset,
-        radius,
-        radians(-180),
-        radians(-90),
-        false
-    );
-    // top right:
-    ctx.arc(
-        w - offset,
-        offset,
-        radius,
-        radians(-90),
-        radians(-0),
-        false
-    );
-    // bottom right:
-    ctx.arc(
-        w - offset,
-        h - offset,
-        radius,
-        radians(0),
-        radians(90),
-        false
-    );
-    // bottom left:
-    ctx.arc(
-        offset,
-        h - offset,
-        radius,
-        radians(90),
-        radians(180),
-        false
-    );
-};
+//     // top left:
+//     ctx.arc(
+//         offset,
+//         offset,
+//         radius,
+//         radians(-180),
+//         radians(-90),
+//         false
+//     );
+//     // top right:
+//     ctx.arc(
+//         w - offset,
+//         offset,
+//         radius,
+//         radians(-90),
+//         radians(-0),
+//         false
+//     );
+//     // bottom right:
+//     ctx.arc(
+//         w - offset,
+//         h - offset,
+//         radius,
+//         radians(0),
+//         radians(90),
+//         false
+//     );
+//     // bottom left:
+//     ctx.arc(
+//         offset,
+//         h - offset,
+//         radius,
+//         radians(90),
+//         radians(180),
+//         false
+//     );
+// };
 
-// BoxMorph menus:
+// // BoxMorph menus:
 
-BoxMorph.prototype.developersMenu = function () {
-    var menu = BoxMorph.uber.developersMenu.call(this);
-    menu.addLine();
-    menu.addItem(
-        "border width...",
-        () => {
-            this.prompt(
-                menu.title + '\nborder\nwidth:',
-                this.setBorderWidth,
-                this,
-                this.border.toString(),
-                null,
-                0,
-                100,
-                true
-            );
-        },
-        'set the border\'s\nline size'
-    );
-    menu.addItem(
-        "border color...",
-        () => {
-            this.pickColor(
-                menu.title + '\nborder color:',
-                this.setBorderColor,
-                this,
-                this.borderColor
-            );
-        },
-        'set the border\'s\nline color'
-    );
-    menu.addItem(
-        "corner size...",
-        () => {
-            this.prompt(
-                menu.title + '\ncorner\nsize:',
-                this.setCornerSize,
-                this,
-                this.edge.toString(),
-                null,
-                0,
-                100,
-                true
-            );
-        },
-        'set the corner\'s\nradius'
-    );
-    return menu;
-};
+// BoxMorph.prototype.developersMenu = function () {
+//     var menu = BoxMorph.uber.developersMenu.call(this);
+//     menu.addLine();
+//     menu.addItem(
+//         "border width...",
+//         () => {
+//             this.prompt(
+//                 menu.title + '\nborder\nwidth:',
+//                 this.setBorderWidth,
+//                 this,
+//                 this.border.toString(),
+//                 null,
+//                 0,
+//                 100,
+//                 true
+//             );
+//         },
+//         'set the border\'s\nline size'
+//     );
+//     menu.addItem(
+//         "border color...",
+//         () => {
+//             this.pickColor(
+//                 menu.title + '\nborder color:',
+//                 this.setBorderColor,
+//                 this,
+//                 this.borderColor
+//             );
+//         },
+//         'set the border\'s\nline color'
+//     );
+//     menu.addItem(
+//         "corner size...",
+//         () => {
+//             this.prompt(
+//                 menu.title + '\ncorner\nsize:',
+//                 this.setCornerSize,
+//                 this,
+//                 this.edge.toString(),
+//                 null,
+//                 0,
+//                 100,
+//                 true
+//             );
+//         },
+//         'set the corner\'s\nradius'
+//     );
+//     return menu;
+// };
 
-BoxMorph.prototype.setBorderWidth = function (size) {
-    // for context menu demo purposes
-    var newSize;
-    if (typeof size === 'number') {
-        this.border = Math.max(size, 0);
-    } else {
-        newSize = parseFloat(size);
-        if (!isNaN(newSize)) {
-            this.border = Math.max(newSize, 0);
-        }
-    }
-    this.changed();
-};
+// BoxMorph.prototype.setBorderWidth = function (size) {
+//     // for context menu demo purposes
+//     var newSize;
+//     if (typeof size === 'number') {
+//         this.border = Math.max(size, 0);
+//     } else {
+//         newSize = parseFloat(size);
+//         if (!isNaN(newSize)) {
+//             this.border = Math.max(newSize, 0);
+//         }
+//     }
+//     this.changed();
+// };
 
-BoxMorph.prototype.setBorderColor = function (color) {
-    // for context menu demo purposes
-    if (color) {
-        this.borderColor = color;
-        this.changed();
-    }
-};
+// BoxMorph.prototype.setBorderColor = function (color) {
+//     // for context menu demo purposes
+//     if (color) {
+//         this.borderColor = color;
+//         this.changed();
+//     }
+// };
 
-BoxMorph.prototype.setCornerSize = function (size) {
-    // for context menu demo purposes
-    var newSize;
-    if (typeof size === 'number') {
-        this.edge = Math.max(size, 0);
-    } else {
-        newSize = parseFloat(size);
-        if (!isNaN(newSize)) {
-            this.edge = Math.max(newSize, 0);
-        }
-    }
-    this.changed();
-};
+// BoxMorph.prototype.setCornerSize = function (size) {
+//     // for context menu demo purposes
+//     var newSize;
+//     if (typeof size === 'number') {
+//         this.edge = Math.max(size, 0);
+//     } else {
+//         newSize = parseFloat(size);
+//         if (!isNaN(newSize)) {
+//             this.edge = Math.max(newSize, 0);
+//         }
+//     }
+//     this.changed();
+// };
 
-BoxMorph.prototype.colorSetters = function () {
-    // for context menu demo purposes
-    return ['color', 'borderColor'];
-};
+// BoxMorph.prototype.colorSetters = function () {
+//     // for context menu demo purposes
+//     return ['color', 'borderColor'];
+// };
 
-BoxMorph.prototype.numericalSetters = function () {
-    // for context menu demo purposes
-    var list = BoxMorph.uber.numericalSetters.call(this);
-    list.push('setBorderWidth', 'setCornerSize');
-    return list;
-};
+// BoxMorph.prototype.numericalSetters = function () {
+//     // for context menu demo purposes
+//     var list = BoxMorph.uber.numericalSetters.call(this);
+//     list.push('setBorderWidth', 'setCornerSize');
+//     return list;
+// };
 
 // SpeechBubbleMorph ///////////////////////////////////////////////////
 
@@ -7892,538 +7892,538 @@ InspectorMorph.prototype.updateReferences = function (map) {
     this.list.activateIndex(active);
 };
 
-// MenuMorph ///////////////////////////////////////////////////////////
+// // MenuMorph ///////////////////////////////////////////////////////////
 
-// MenuMorph: referenced constructors
+// // MenuMorph: referenced constructors
 
-var MenuItemMorph;
+// var MenuItemMorph;
 
-// MenuMorph inherits from BoxMorph:
+// // MenuMorph inherits from BoxMorph:
 
-MenuMorph.prototype = new BoxMorph();
-MenuMorph.prototype.constructor = MenuMorph;
-MenuMorph.uber = BoxMorph.prototype;
+// MenuMorph.prototype = new BoxMorph();
+// MenuMorph.prototype.constructor = MenuMorph;
+// MenuMorph.uber = BoxMorph.prototype;
 
-// MenuMorph instance creation:
+// // MenuMorph instance creation:
 
-function MenuMorph(target, title, environment, fontSize) {
-    this.init(target, title, environment, fontSize);
+// function MenuMorph(target, title, environment, fontSize) {
+//     this.init(target, title, environment, fontSize);
 
-    /*
-    if target is a function, use it as callback:
-    execute target as callback function with the action property
-    of the triggered MenuItem as argument.
-    Use the environment, if it is specified.
-    Note: if action is also a function, instead of becoming
-    the argument itself it will be called to answer the argument.
-    For selections, Yes/No Choices etc.
+//     /*
+//     if target is a function, use it as callback:
+//     execute target as callback function with the action property
+//     of the triggered MenuItem as argument.
+//     Use the environment, if it is specified.
+//     Note: if action is also a function, instead of becoming
+//     the argument itself it will be called to answer the argument.
+//     For selections, Yes/No Choices etc.
 
-    else (if target is not a function):
+//     else (if target is not a function):
 
-        if action is a function:
-        execute the action with target as environment (can be null)
-        for lambdafied (inline) actions
+//         if action is a function:
+//         execute the action with target as environment (can be null)
+//         for lambdafied (inline) actions
 
-        else if action is a String:
-        treat it as function property of target and execute it
-        for selector-like actions
-    */
-}
+//         else if action is a String:
+//         treat it as function property of target and execute it
+//         for selector-like actions
+//     */
+// }
 
-MenuMorph.prototype.init = function (target, title, environment, fontSize) {
-    // additional properties:
-    this.target = target;
-    this.title = title || null;
-    this.environment = environment || null;
-    this.fontSize = fontSize || null;
-    this.items = [];
-    this.label = null;
-    this.world = null;
-    this.isListContents = false;
-    this.hasFocus = false;
-    this.selection = null;
-    this.submenu = null;
+// MenuMorph.prototype.init = function (target, title, environment, fontSize) {
+//     // additional properties:
+//     this.target = target;
+//     this.title = title || null;
+//     this.environment = environment || null;
+//     this.fontSize = fontSize || null;
+//     this.items = [];
+//     this.label = null;
+//     this.world = null;
+//     this.isListContents = false;
+//     this.hasFocus = false;
+//     this.selection = null;
+//     this.submenu = null;
 
-    // initialize inherited properties:
-    MenuMorph.uber.init.call(this);
+//     // initialize inherited properties:
+//     MenuMorph.uber.init.call(this);
 
-    // override inherited properties:
-    this.isDraggable = false;
-    this.noDropShadow = true;
-    this.fullShadowSource = false;
+//     // override inherited properties:
+//     this.isDraggable = false;
+//     this.noDropShadow = true;
+//     this.fullShadowSource = false;
 
-    // immutable properties:
-    this.border = null;
-    this.edge = null;
-};
+//     // immutable properties:
+//     this.border = null;
+//     this.edge = null;
+// };
 
-MenuMorph.prototype.addItem = function (
-    labelString,
-    action,
-    hint,
-    color,
-    bold, // bool
-    italic, // bool
-    doubleClickAction, // optional, when used as list contents
-    shortcut, // optional string, icon (Morph or Canvas) or tuple [icon, string]
-    verbatim // optional bool, don't translate if true
-) {
-    /*
-    labelString is normally a single-line string. But it can also be one
-    of the following:
+// MenuMorph.prototype.addItem = function (
+//     labelString,
+//     action,
+//     hint,
+//     color,
+//     bold, // bool
+//     italic, // bool
+//     doubleClickAction, // optional, when used as list contents
+//     shortcut, // optional string, icon (Morph or Canvas) or tuple [icon, string]
+//     verbatim // optional bool, don't translate if true
+// ) {
+//     /*
+//     labelString is normally a single-line string. But it can also be one
+//     of the following:
 
-        * a multi-line string (containing line breaks)
-        * an icon (either a Morph or a Canvas)
-        * a tuple of format: [icon, string]
-    */
-    this.items.push([
-        verbatim ? labelString || 'close' : localize(labelString || 'close'),
-        action === 0 ? 0 : action || nop,
-        hint,
-        color,
-        bold || false,
-        italic || false,
-        doubleClickAction,
-        shortcut,
-        verbatim]);
-};
+//         * a multi-line string (containing line breaks)
+//         * an icon (either a Morph or a Canvas)
+//         * a tuple of format: [icon, string]
+//     */
+//     this.items.push([
+//         verbatim ? labelString || 'close' : localize(labelString || 'close'),
+//         action === 0 ? 0 : action || nop,
+//         hint,
+//         color,
+//         bold || false,
+//         italic || false,
+//         doubleClickAction,
+//         shortcut,
+//         verbatim]);
+// };
 
-MenuMorph.prototype.addMenu = function (label, aMenu, indicator, verbatim) {
-    this.addPair(
-        label,
-        aMenu,
-        isNil(indicator) ? '\u25ba' : indicator,
-        null,
-        verbatim // don't translate
-    );
-};
+// MenuMorph.prototype.addMenu = function (label, aMenu, indicator, verbatim) {
+//     this.addPair(
+//         label,
+//         aMenu,
+//         isNil(indicator) ? '\u25ba' : indicator,
+//         null,
+//         verbatim // don't translate
+//     );
+// };
 
-MenuMorph.prototype.addPair = function (
-    label,
-    action,
-    shortcut,
-    hint,
-    verbatim // don't translate
-) {
-    this.addItem(
-        label,
-        action,
-        hint,
-        null,
-        null,
-        null,
-        null,
-        shortcut,
-        verbatim
-    );
-};
+// MenuMorph.prototype.addPair = function (
+//     label,
+//     action,
+//     shortcut,
+//     hint,
+//     verbatim // don't translate
+// ) {
+//     this.addItem(
+//         label,
+//         action,
+//         hint,
+//         null,
+//         null,
+//         null,
+//         null,
+//         shortcut,
+//         verbatim
+//     );
+// };
 
-MenuMorph.prototype.addLine = function (width) {
-    this.items.push([0, width || 1]);
-};
+// MenuMorph.prototype.addLine = function (width) {
+//     this.items.push([0, width || 1]);
+// };
 
-MenuMorph.prototype.createLabel = function () {
-    var text;
-    if (this.label !== null) {
-        this.label.destroy();
-    }
-    text = new TextMorph(
-        localize(this.title),
-        this.fontSize || MorphicPreferences.menuFontSize,
-        MorphicPreferences.menuFontName,
-        true,
-        false,
-        'center'
-    );
-    text.alignment = 'center';
-    text.color = WHITE;
-    text.backgroundColor = this.borderColor;
-    text.fixLayout();
-    this.label = new BoxMorph(3, 0);
-    if (MorphicPreferences.isFlat) {
-        this.label.edge = 0;
-    }
-    this.label.color = this.borderColor;
-    this.label.borderColor = this.borderColor;
-    this.label.setExtent(text.extent().add(4));
-    this.label.add(text);
-    this.label.text = text;
-};
+// MenuMorph.prototype.createLabel = function () {
+//     var text;
+//     if (this.label !== null) {
+//         this.label.destroy();
+//     }
+//     text = new TextMorph(
+//         localize(this.title),
+//         this.fontSize || MorphicPreferences.menuFontSize,
+//         MorphicPreferences.menuFontName,
+//         true,
+//         false,
+//         'center'
+//     );
+//     text.alignment = 'center';
+//     text.color = WHITE;
+//     text.backgroundColor = this.borderColor;
+//     text.fixLayout();
+//     this.label = new BoxMorph(3, 0);
+//     if (MorphicPreferences.isFlat) {
+//         this.label.edge = 0;
+//     }
+//     this.label.color = this.borderColor;
+//     this.label.borderColor = this.borderColor;
+//     this.label.setExtent(text.extent().add(4));
+//     this.label.add(text);
+//     this.label.text = text;
+// };
 
-MenuMorph.prototype.createItems = function () {
-    var item,
-        fb,
-        x,
-        y,
-        isLine = false;
+// MenuMorph.prototype.createItems = function () {
+//     var item,
+//         fb,
+//         x,
+//         y,
+//         isLine = false;
 
-    this.children.forEach(m => m.destroy());
-    this.children = [];
-    if (!this.isListContents) {
-        this.edge = MorphicPreferences.isFlat ? 0 : 5;
-        this.border = MorphicPreferences.isFlat ? 1 : 2;
-    }
-    this.color = WHITE;
-    this.borderColor = new Color(60, 60, 60);
-    this.setExtent(new Point(0, 0));
+//     this.children.forEach(m => m.destroy());
+//     this.children = [];
+//     if (!this.isListContents) {
+//         this.edge = MorphicPreferences.isFlat ? 0 : 5;
+//         this.border = MorphicPreferences.isFlat ? 1 : 2;
+//     }
+//     this.color = WHITE;
+//     this.borderColor = new Color(60, 60, 60);
+//     this.setExtent(new Point(0, 0));
 
-    y = 2;
-    x = this.left() + 4;
-    if (!this.isListContents) {
-        if (this.title) {
-            this.createLabel();
-            this.label.setPosition(this.bounds.origin.add(4));
-            this.add(this.label);
-            y = this.label.bottom();
-        } else {
-            y = this.top() + 4;
-        }
-    }
-    y += 1;
-    this.items.forEach(tuple => {
-        isLine = false;
-        if (tuple instanceof StringFieldMorph ||
-                tuple instanceof ColorPickerMorph ||
-                tuple instanceof SliderMorph ||
-                tuple instanceof DialMorph) {
-            item = tuple;
-        } else if (tuple[0] === 0) {
-            isLine = true;
-            item = new Morph();
-            item.color = this.borderColor;
-            item.setHeight(tuple[1]);
-        } else {
-            item = new MenuItemMorph(
-                this.target,
-                tuple[1],
-                tuple[0],
-                this.fontSize || MorphicPreferences.menuFontSize,
-                MorphicPreferences.menuFontName,
-                this.environment,
-                tuple[2], // bubble help hint
-                tuple[3], // color
-                tuple[4], // bold
-                tuple[5], // italic
-                tuple[6], // doubleclick action
-                tuple[7] // shortcut
-            );
-        }
-        if (isLine) {
-            y += 1;
-        }
-        item.setPosition(new Point(x, y));
-        this.add(item);
-        y = y + item.height();
-        if (isLine) {
-            y += 1;
-        }
-    });
+//     y = 2;
+//     x = this.left() + 4;
+//     if (!this.isListContents) {
+//         if (this.title) {
+//             this.createLabel();
+//             this.label.setPosition(this.bounds.origin.add(4));
+//             this.add(this.label);
+//             y = this.label.bottom();
+//         } else {
+//             y = this.top() + 4;
+//         }
+//     }
+//     y += 1;
+//     this.items.forEach(tuple => {
+//         isLine = false;
+//         if (tuple instanceof StringFieldMorph ||
+//                 tuple instanceof ColorPickerMorph ||
+//                 tuple instanceof SliderMorph ||
+//                 tuple instanceof DialMorph) {
+//             item = tuple;
+//         } else if (tuple[0] === 0) {
+//             isLine = true;
+//             item = new Morph();
+//             item.color = this.borderColor;
+//             item.setHeight(tuple[1]);
+//         } else {
+//             item = new MenuItemMorph(
+//                 this.target,
+//                 tuple[1],
+//                 tuple[0],
+//                 this.fontSize || MorphicPreferences.menuFontSize,
+//                 MorphicPreferences.menuFontName,
+//                 this.environment,
+//                 tuple[2], // bubble help hint
+//                 tuple[3], // color
+//                 tuple[4], // bold
+//                 tuple[5], // italic
+//                 tuple[6], // doubleclick action
+//                 tuple[7] // shortcut
+//             );
+//         }
+//         if (isLine) {
+//             y += 1;
+//         }
+//         item.setPosition(new Point(x, y));
+//         this.add(item);
+//         y = y + item.height();
+//         if (isLine) {
+//             y += 1;
+//         }
+//     });
 
-    fb = this.fullBounds();
-    this.setExtent(fb.extent().add(4));
-    this.adjustWidths();
-};
+//     fb = this.fullBounds();
+//     this.setExtent(fb.extent().add(4));
+//     this.adjustWidths();
+// };
 
-MenuMorph.prototype.maxWidth = function () {
-    var w = 0;
+// MenuMorph.prototype.maxWidth = function () {
+//     var w = 0;
 
-    if (this.parent instanceof FrameMorph) {
-        if (this.parent.scrollFrame instanceof ScrollFrameMorph) {
-            w = this.parent.scrollFrame.width();
-        }
-    }
-    this.children.forEach(item => {
-        if (item instanceof MenuItemMorph) {
-            w = Math.max(
-                w,
-                item.label.width() + 8 +
-                    (item.shortcut ? item.shortcut.width() + 4 : 0)
-            );
-        } else if ((item instanceof StringFieldMorph) ||
-                (item instanceof ColorPickerMorph) ||
-                (item instanceof SliderMorph) ||
-                (item instanceof DialMorph)) {
-            w = Math.max(w, item.width());
-        }
-    });
-    if (this.label) {
-        w = Math.max(w, this.label.width());
-    }
-    return w;
-};
+//     if (this.parent instanceof FrameMorph) {
+//         if (this.parent.scrollFrame instanceof ScrollFrameMorph) {
+//             w = this.parent.scrollFrame.width();
+//         }
+//     }
+//     this.children.forEach(item => {
+//         if (item instanceof MenuItemMorph) {
+//             w = Math.max(
+//                 w,
+//                 item.label.width() + 8 +
+//                     (item.shortcut ? item.shortcut.width() + 4 : 0)
+//             );
+//         } else if ((item instanceof StringFieldMorph) ||
+//                 (item instanceof ColorPickerMorph) ||
+//                 (item instanceof SliderMorph) ||
+//                 (item instanceof DialMorph)) {
+//             w = Math.max(w, item.width());
+//         }
+//     });
+//     if (this.label) {
+//         w = Math.max(w, this.label.width());
+//     }
+//     return w;
+// };
 
-MenuMorph.prototype.adjustWidths = function () {
-    var w = this.maxWidth();
-    this.children.forEach(item => {
-    	if (!(item instanceof DialMorph)) {
-            item.setWidth(w);
-        }
-        item.fixLayout();
-        if (item === this.label) {
-            item.text.setPosition(
-                item.center().subtract(
-                    item.text.extent().floorDivideBy(2)
-                )
-            );
-        }
-    });
-};
+// MenuMorph.prototype.adjustWidths = function () {
+//     var w = this.maxWidth();
+//     this.children.forEach(item => {
+//     	if (!(item instanceof DialMorph)) {
+//             item.setWidth(w);
+//         }
+//         item.fixLayout();
+//         if (item === this.label) {
+//             item.text.setPosition(
+//                 item.center().subtract(
+//                     item.text.extent().floorDivideBy(2)
+//                 )
+//             );
+//         }
+//     });
+// };
 
-MenuMorph.prototype.unselectAllItems = function () {
-    this.children.forEach(item => {
-        if (item instanceof MenuItemMorph) {
-            if (item.userState !== 'normal') {
-                item.userState = 'normal';
-                item.rerender();
-            }
-        } else if (item instanceof ScrollFrameMorph) {
-        	item.contents.children.forEach(morph => {
-         		if (morph instanceof MenuItemMorph &&
-                        morph.userState !== 'normal') {
-                    morph.userState = 'normal';
-                    morph.rerender();
-              	}
-         	});
-        }
-    });
-};
+// MenuMorph.prototype.unselectAllItems = function () {
+//     this.children.forEach(item => {
+//         if (item instanceof MenuItemMorph) {
+//             if (item.userState !== 'normal') {
+//                 item.userState = 'normal';
+//                 item.rerender();
+//             }
+//         } else if (item instanceof ScrollFrameMorph) {
+//         	item.contents.children.forEach(morph => {
+//          		if (morph instanceof MenuItemMorph &&
+//                         morph.userState !== 'normal') {
+//                     morph.userState = 'normal';
+//                     morph.rerender();
+//               	}
+//          	});
+//         }
+//     });
+// };
 
-// MenuMorph popping up
+// // MenuMorph popping up
 
-MenuMorph.prototype.popup = function (world, pos) {
-	var scroller;
+// MenuMorph.prototype.popup = function (world, pos) {
+// 	var scroller;
 
-    this.createItems();
-    this.setPosition(pos);
-    this.addShadow(new Point(2, 2), 80);
-    this.keepWithin(world);
+//     this.createItems();
+//     this.setPosition(pos);
+//     this.addShadow(new Point(2, 2), 80);
+//     this.keepWithin(world);
 
-    if (this.bottom() > world.bottom()) {
-    	// scroll menu items if the menu is taller than the world
-    	this.removeShadow();
-        scroller = this.scroll();
-        this.bounds.corner.y = world.bottom() - 2;
-        this.addShadow(new Point(2, 2), 80);
-        scroller.setHeight(world.bottom() - scroller.top() - 6);
-        scroller.adjustScrollBars(); // ?
-     }
+//     if (this.bottom() > world.bottom()) {
+//     	// scroll menu items if the menu is taller than the world
+//     	this.removeShadow();
+//         scroller = this.scroll();
+//         this.bounds.corner.y = world.bottom() - 2;
+//         this.addShadow(new Point(2, 2), 80);
+//         scroller.setHeight(world.bottom() - scroller.top() - 6);
+//         scroller.adjustScrollBars(); // ?
+//      }
 
-    if (world.activeMenu) {
-        world.activeMenu.destroy();
-    }
-    if (this.items.length < 1 && !this.title) { // don't show empty menus
-        return;
-    }
-    world.add(this);
-    world.activeMenu = this;
-    this.world = world; // optionally enable keyboard support
-    this.fullChanged();
-};
+//     if (world.activeMenu) {
+//         world.activeMenu.destroy();
+//     }
+//     if (this.items.length < 1 && !this.title) { // don't show empty menus
+//         return;
+//     }
+//     world.add(this);
+//     world.activeMenu = this;
+//     this.world = world; // optionally enable keyboard support
+//     this.fullChanged();
+// };
 
-MenuMorph.prototype.scroll = function () {
-    // private - move all items into a scroll frame
-    var scroller = new ScrollFrameMorph(),
-        start = this.label ? 1 : 0,
-        first = this.children[start];
+// MenuMorph.prototype.scroll = function () {
+//     // private - move all items into a scroll frame
+//     var scroller = new ScrollFrameMorph(),
+//         start = this.label ? 1 : 0,
+//         first = this.children[start];
 
-    scroller.setPosition(first.position());
-    this.children.slice(start).forEach(morph => scroller.addContents(morph));
-    this.add(scroller);
-    scroller.setWidth(first.width());
-    return scroller;
-};
+//     scroller.setPosition(first.position());
+//     this.children.slice(start).forEach(morph => scroller.addContents(morph));
+//     this.add(scroller);
+//     scroller.setWidth(first.width());
+//     return scroller;
+// };
 
-MenuMorph.prototype.popUpAtHand = function (world) {
-    var wrrld = world || this.world;
-    this.popup(wrrld, wrrld.hand.position());
-};
+// MenuMorph.prototype.popUpAtHand = function (world) {
+//     var wrrld = world || this.world;
+//     this.popup(wrrld, wrrld.hand.position());
+// };
 
-MenuMorph.prototype.popUpCenteredAtHand = function (world) {
-    var wrrld = world || this.world;
-    this.fixLayout();
-    this.createItems();
-    this.popup(
-        wrrld,
-        wrrld.hand.position().subtract(
-            this.extent().floorDivideBy(2)
-        )
-    );
-};
+// MenuMorph.prototype.popUpCenteredAtHand = function (world) {
+//     var wrrld = world || this.world;
+//     this.fixLayout();
+//     this.createItems();
+//     this.popup(
+//         wrrld,
+//         wrrld.hand.position().subtract(
+//             this.extent().floorDivideBy(2)
+//         )
+//     );
+// };
 
-MenuMorph.prototype.popUpCenteredInWorld = function (world) {
-    var wrrld = world || this.world;
-    this.fixLayout();
-    this.createItems();
-    this.popup(
-        wrrld,
-        wrrld.center().subtract(
-            this.extent().floorDivideBy(2)
-        )
-    );
-};
+// MenuMorph.prototype.popUpCenteredInWorld = function (world) {
+//     var wrrld = world || this.world;
+//     this.fixLayout();
+//     this.createItems();
+//     this.popup(
+//         wrrld,
+//         wrrld.center().subtract(
+//             this.extent().floorDivideBy(2)
+//         )
+//     );
+// };
 
-// MenuMorph submenus
+// // MenuMorph submenus
 
-MenuMorph.prototype.closeRootMenu = function () {
-    if (this.parent instanceof MenuMorph) {
-        this.parent.closeRootMenu();
-    } else {
-        this.destroy();
-    }
-};
+// MenuMorph.prototype.closeRootMenu = function () {
+//     if (this.parent instanceof MenuMorph) {
+//         this.parent.closeRootMenu();
+//     } else {
+//         this.destroy();
+//     }
+// };
 
-MenuMorph.prototype.closeSubmenu = function () {
-    if (this.submenu) {
-        this.submenu.destroy();
-        this.submenu = null;
-        this.unselectAllItems();
-        this.world.activeMenu = this;
-    }
-};
+// MenuMorph.prototype.closeSubmenu = function () {
+//     if (this.submenu) {
+//         this.submenu.destroy();
+//         this.submenu = null;
+//         this.unselectAllItems();
+//         this.world.activeMenu = this;
+//     }
+// };
 
-// MenuMorph keyboard accessibility
+// // MenuMorph keyboard accessibility
 
-MenuMorph.prototype.getFocus = function () {
-    this.world.keyboardFocus = this;
-    this.selection = null;
-    this.selectFirst();
-    this.hasFocus = true;
-};
+// MenuMorph.prototype.getFocus = function () {
+//     this.world.keyboardFocus = this;
+//     this.selection = null;
+//     this.selectFirst();
+//     this.hasFocus = true;
+// };
 
-MenuMorph.prototype.processKeyDown = function (event) {
-    // console.log(event.keyCode);
-    switch (event.keyCode) {
-    case 13: // 'enter'
-    case 32: // 'space'
-        if (this.selection) {
-            this.selection.mouseClickLeft();
-            if (this.submenu) {
-                this.submenu.getFocus();
-            }
-        }
-        return;
-    case 27: // 'esc'
-        return this.destroy();
-    case 37: // 'left arrow'
-        return this.leaveSubmenu();
-    case 38: // 'up arrow'
-        return this.selectUp();
-    case 39: // 'right arrow'
-        return this.enterSubmenu();
-    case 40: // 'down arrow'
-        return this.selectDown();
-    default:
-        nop();
-    }
-};
+// MenuMorph.prototype.processKeyDown = function (event) {
+//     // console.log(event.keyCode);
+//     switch (event.keyCode) {
+//     case 13: // 'enter'
+//     case 32: // 'space'
+//         if (this.selection) {
+//             this.selection.mouseClickLeft();
+//             if (this.submenu) {
+//                 this.submenu.getFocus();
+//             }
+//         }
+//         return;
+//     case 27: // 'esc'
+//         return this.destroy();
+//     case 37: // 'left arrow'
+//         return this.leaveSubmenu();
+//     case 38: // 'up arrow'
+//         return this.selectUp();
+//     case 39: // 'right arrow'
+//         return this.enterSubmenu();
+//     case 40: // 'down arrow'
+//         return this.selectDown();
+//     default:
+//         nop();
+//     }
+// };
 
-MenuMorph.prototype.processKeyUp = function (event) {
-    nop(event);
-};
+// MenuMorph.prototype.processKeyUp = function (event) {
+//     nop(event);
+// };
 
-MenuMorph.prototype.processKeyPress = function (event) {
-    nop(event);
-};
+// MenuMorph.prototype.processKeyPress = function (event) {
+//     nop(event);
+// };
 
-MenuMorph.prototype.selectFirst = function () {
-    var scroller, items, i;
+// MenuMorph.prototype.selectFirst = function () {
+//     var scroller, items, i;
 
-    scroller = detect(
-        this.children,
-        morph => morph instanceof ScrollFrameMorph
-    );
-    items = scroller ? scroller.contents.children : this.children;
-    for (i = 0; i < items.length; i += 1) {
-        if (items[i] instanceof MenuItemMorph) {
-            this.select(items[i]);
-            return;
-    	}
-	}
-};
+//     scroller = detect(
+//         this.children,
+//         morph => morph instanceof ScrollFrameMorph
+//     );
+//     items = scroller ? scroller.contents.children : this.children;
+//     for (i = 0; i < items.length; i += 1) {
+//         if (items[i] instanceof MenuItemMorph) {
+//             this.select(items[i]);
+//             return;
+//     	}
+// 	}
+// };
 
-MenuMorph.prototype.selectUp = function () {
-    var scroller, triggers, idx;
+// MenuMorph.prototype.selectUp = function () {
+//     var scroller, triggers, idx;
 
-	scroller = detect(
-        this.children,
-        morph => morph instanceof ScrollFrameMorph
-    );
-    triggers = (scroller ? scroller.contents.children : this.children).filter(
-    	each => each instanceof MenuItemMorph
-    );
-    if (!this.selection) {
-        if (triggers.length) {
-            this.select(triggers[0]);
-        }
-        return;
-    }
-    idx = triggers.indexOf(this.selection) - 1;
-    if (idx < 0) {
-        idx = triggers.length - 1;
-    }
-    this.select(triggers[idx]);
-};
+// 	scroller = detect(
+//         this.children,
+//         morph => morph instanceof ScrollFrameMorph
+//     );
+//     triggers = (scroller ? scroller.contents.children : this.children).filter(
+//     	each => each instanceof MenuItemMorph
+//     );
+//     if (!this.selection) {
+//         if (triggers.length) {
+//             this.select(triggers[0]);
+//         }
+//         return;
+//     }
+//     idx = triggers.indexOf(this.selection) - 1;
+//     if (idx < 0) {
+//         idx = triggers.length - 1;
+//     }
+//     this.select(triggers[idx]);
+// };
 
-MenuMorph.prototype.selectDown = function () {
-    var scroller, triggers, idx;
+// MenuMorph.prototype.selectDown = function () {
+//     var scroller, triggers, idx;
 
-    scroller = detect(
-        this.children,
-        morph => morph instanceof ScrollFrameMorph
-    );
-    triggers = (scroller ? scroller.contents.children : this.children).filter(
-        each => each instanceof MenuItemMorph
-    );
-    if (!this.selection) {
-        if (triggers.length) {
-            this.select(triggers[0]);
-        }
-        return;
-    }
-    idx = triggers.indexOf(this.selection) + 1;
-    if (idx >= triggers.length) {
-        idx = 0;
-    }
-    this.select(triggers[idx]);
-};
+//     scroller = detect(
+//         this.children,
+//         morph => morph instanceof ScrollFrameMorph
+//     );
+//     triggers = (scroller ? scroller.contents.children : this.children).filter(
+//         each => each instanceof MenuItemMorph
+//     );
+//     if (!this.selection) {
+//         if (triggers.length) {
+//             this.select(triggers[0]);
+//         }
+//         return;
+//     }
+//     idx = triggers.indexOf(this.selection) + 1;
+//     if (idx >= triggers.length) {
+//         idx = 0;
+//     }
+//     this.select(triggers[idx]);
+// };
 
-MenuMorph.prototype.enterSubmenu = function () {
-    if (this.selection && this.selection.action instanceof MenuMorph) {
-        this.selection.popUpSubmenu();
-        if (this.submenu) {
-            this.submenu.getFocus();
-        }
-    }
-};
+// MenuMorph.prototype.enterSubmenu = function () {
+//     if (this.selection && this.selection.action instanceof MenuMorph) {
+//         this.selection.popUpSubmenu();
+//         if (this.submenu) {
+//             this.submenu.getFocus();
+//         }
+//     }
+// };
 
-MenuMorph.prototype.leaveSubmenu = function () {
-    var menu = this.parent;
-    if (this.parent instanceof MenuMorph) {
-        menu.submenu = null;
-        menu.hasFocus = true;
-        this.destroy();
-        menu.world.keyboardFocus = menu;
-        menu.world.activeMenu = menu;
-    }
-};
+// MenuMorph.prototype.leaveSubmenu = function () {
+//     var menu = this.parent;
+//     if (this.parent instanceof MenuMorph) {
+//         menu.submenu = null;
+//         menu.hasFocus = true;
+//         this.destroy();
+//         menu.world.keyboardFocus = menu;
+//         menu.world.activeMenu = menu;
+//     }
+// };
 
-MenuMorph.prototype.select = function (aMenuItem) {
-    this.unselectAllItems();
-    aMenuItem.userState = 'highlight';
-    aMenuItem.rerender();
-    aMenuItem.scrollIntoView();
-    this.selection = aMenuItem;
-};
+// MenuMorph.prototype.select = function (aMenuItem) {
+//     this.unselectAllItems();
+//     aMenuItem.userState = 'highlight';
+//     aMenuItem.rerender();
+//     aMenuItem.scrollIntoView();
+//     this.selection = aMenuItem;
+// };
 
-MenuMorph.prototype.destroy = function () {
-    if (this.hasFocus) {
-        this.world.keyboardFocus = null;
-    }
-    if (!this.isListContents && (this.world.activeMenu === this)) {
-        this.world.activeMenu = null;
-    }
-    MenuMorph.uber.destroy.call(this);
-};
+// MenuMorph.prototype.destroy = function () {
+//     if (this.hasFocus) {
+//         this.world.keyboardFocus = null;
+//     }
+//     if (!this.isListContents && (this.world.activeMenu === this)) {
+//         this.world.activeMenu = null;
+//     }
+//     MenuMorph.uber.destroy.call(this);
+// };
 
 // StringMorph /////////////////////////////////////////////////////////
 

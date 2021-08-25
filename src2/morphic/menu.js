@@ -1,7 +1,7 @@
 class MenuMorph extends BoxMorph {
     constructor(target, title, environment, fontSize) {
         super();
-        this.init(target, title, environment, fontSize);
+        MenuMorph.prototype.init.call(this, target, title, environment, fontSize);
 
         /*
         if target is a function, use it as callback:

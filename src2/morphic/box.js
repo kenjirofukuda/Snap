@@ -15,18 +15,17 @@
 class BoxMorph extends Morph {
     constructor(edge, border, borderColor) {
         super()
+        BoxMorph.prototype.init.call(this, edge, border, borderColor);
+    }
+
+    init(edge, border, borderColor) {
         this.edge = edge || 4;
         this.border = border || ((border === 0) ? 0 : 2);
         this.borderColor = borderColor || BLACK;
+        super.init();
     }
 
-    // init(edge, border, borderColor) {
-    //     this.edge = edge || 4;
-    //     this.border = border || ((border === 0) ? 0 : 2);
-    //     this.borderColor = borderColor || BLACK;
-    //     // super.init();
-    // }
-    // // BoxMorph drawing:
+    // BoxMorph drawing:
     render(ctx) {
         if ((this.edge === 0) && (this.border === 0)) {
             super.render(ctx);
