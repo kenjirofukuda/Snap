@@ -2,19 +2,10 @@
 
 // can be used for text cursors
 
-// var BlinkerMorph;
-
-// // BlinkerMorph inherits from Morph:
-
-// BlinkerMorph.prototype = new Morph();
-// ;
-// BlinkerMorph.uber = Morph.prototype;
-
-// BlinkerMorph instance creation:
-
 class BlinkerMorph extends Morph {
     constructor(rate) {
-        this.init(rate)
+        super()
+        BlinkerMorph.prototype.init.call(this, rate)
     }
     
     init(rate) {

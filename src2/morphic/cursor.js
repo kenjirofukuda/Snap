@@ -21,7 +21,7 @@
 class CursorMorph extends BlinkerMorph {
     constructor(aStringOrTextMorph, aTextarea) {
         super()
-        this.init(aStringOrTextMorph, aTextarea);
+        CursorMorph.prototype.init.call(this, aStringOrTextMorph, aTextarea);
     }
     init(aStringOrTextMorph, aTextarea) {
         var ls;
