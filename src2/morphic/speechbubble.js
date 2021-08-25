@@ -1,23 +1,10 @@
-// SpeechBubbleMorph ///////////////////////////////////////////////////
-
-/*
-    I am a comic-style speech bubble that can display either a string,
-    a Morph, a Canvas or a toString() representation of anything else.
-    If I am invoked using popUp() I behave like a tool tip.
-*/
-
-// SpeechBubbleMorph: referenced constructors
-
-// var SpeechBubbleMorph;
-
-// // SpeechBubbleMorph inherits from BoxMorph:
-
-// SpeechBubbleMorph.prototype = new BoxMorph();
-// SpeechBubbleMorph.prototype.constructor = SpeechBubbleMorph;
-// SpeechBubbleMorph.uber = BoxMorph.prototype;
-
-// SpeechBubbleMorph instance creation:
-
+/** 
+ * I am a comic-style speech bubble that can display either a string,
+ * a Morph, a Canvas or a toString() representation of anything else.
+ * If I am invoked using popUp() I behave like a tool tip.
+ * 
+ * @extends BlinkerMorph
+ */
 class SpeechBubbleMorph extends BoxMorph {
     constructor(contents,
         color,
@@ -32,43 +19,35 @@ class SpeechBubbleMorph extends BoxMorph {
             border || ((border === 0) ? 0 : 1),
             borderColor || new Color(140, 140, 140)
         );
+        SpeechBubbleMorph.prototype.init.call(
+            this, contents, color, edge, border, borderColor,padding, isThought, noShadow)
+    }
+    
+    init(contents,
+        color,
+        edge,
+        border,
+        borderColor,
+        padding,
+        isThought,
+        noShadow // explicit TRUE to suppress
+    ) {
         this.isPointingRight = true; // orientation of text
         this.contents = contents || '';
         this.padding = padding || 0; // additional vertical pixels
         this.isThought = isThought || false; // draw "think" bubble
         this.isClickable = false;
+        super.init(
+            edge || 6,
+            border || ((border === 0) ? 0 : 1),
+            borderColor || new Color(140, 140, 140)
+        );
         this.hasShadow = noShadow !== true;
         this.noDropShadow = true;
         this.fullShadowSource = false;
         this.color = color || new Color(230, 230, 230);
         this.fixLayout();
     }
-    
-    // init(contents,
-    //     color,
-    //     edge,
-    //     border,
-    //     borderColor,
-    //     padding,
-    //     isThought,
-    //     noShadow // explicit TRUE to suppress
-    // ) {
-    //     this.isPointingRight = true; // orientation of text
-    //     this.contents = contents || '';
-    //     this.padding = padding || 0; // additional vertical pixels
-    //     this.isThought = isThought || false; // draw "think" bubble
-    //     this.isClickable = false;
-    //     super.init(
-    //         edge || 6,
-    //         border || ((border === 0) ? 0 : 1),
-    //         borderColor || new Color(140, 140, 140)
-    //     );
-    //     this.hasShadow = noShadow !== true;
-    //     this.noDropShadow = true;
-    //     this.fullShadowSource = false;
-    //     this.color = color || new Color(230, 230, 230);
-    //     this.fixLayout();
-    // }
     // SpeechBubbleMorph invoking:
     popUp(world, pos, isClickable) {
         this.fixLayout();
