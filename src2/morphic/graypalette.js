@@ -1,15 +1,3 @@
-// GrayPaletteMorph ///////////////////////////////////////////////////
-
-// var GrayPaletteMorph;
-
-// GrayPaletteMorph inherits from ColorPaletteMorph:
-
-// GrayPaletteMorph.prototype = new ColorPaletteMorph();
-// ;
-
-
-// GrayPaletteMorph instance creation:
-
 class GrayPaletteMorph extends ColorPaletteMorph {
     constructor(target, sizePoint) {
         super(target, sizePoint || new Point(80, 10));

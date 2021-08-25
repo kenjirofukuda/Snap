@@ -1,16 +1,8 @@
-// var ColorPaletteMorph;
-
-// ColorPaletteMorph inherits from Morph:
-
-// ColorPaletteMorph.prototype = new Morph();
-// ;
-
-// ColorPaletteMorph instance creation:
-
 class ColorPaletteMorph extends Morph {
     constructor(target, sizePoint) {
-        super()
-        this.init(
+        super();
+        ColorPaletteMorph.prototype.init.call(
+            this,
             target || null,
             sizePoint || new Point(80, 50)
         );
@@ -19,19 +11,23 @@ class ColorPaletteMorph extends Morph {
         super.init();
         this.isCachingImage = true;
         this.target = target;
-        this.targetSetter = 'color';
+        this.targetSetter = "color";
         this.setExtent(size);
         this.choice = null;
     }
     render(ctx) {
-        var ext = this.extent(), x, y, h, l;
+        var ext = this.extent(),
+            x,
+            y,
+            h,
+            l;
 
         this.choice = BLACK;
         for (x = 0; x <= ext.x; x += 1) {
-            h = 360 * x / ext.x;
+            h = (360 * x) / ext.x;
             for (y = 0; y <= ext.y; y += 1) {
-                l = 100 - (y / ext.y * 100);
-                ctx.fillStyle = 'hsl(' + h + ',100%,' + l + '%)';
+                l = 100 - (y / ext.y) * 100;
+                ctx.fillStyle = "hsl(" + h + ",100%," + l + "%)";
                 ctx.fillRect(x, y, 1, 1);
             }
         }
@@ -59,18 +55,19 @@ class ColorPaletteMorph extends Morph {
         var menu = ColorPaletteMorph.uber.developersMenu.call(this);
         menu.addLine();
         menu.addItem(
-            'set target',
+            "set target",
             "setTarget",
-            'choose another morph\nwhose color property\n will be' +
-            ' controlled by this one'
+            "choose another morph\nwhose color property\n will be" +
+                " controlled by this one"
         );
         return menu;
     }
     setTarget() {
-        var choices = this.overlappedMorphs(), menu = new MenuMorph(this, 'choose target:');
+        var choices = this.overlappedMorphs(),
+            menu = new MenuMorph(this, "choose target:");
 
         choices.push(this.world());
-        choices.forEach(each => {
+        choices.forEach((each) => {
             menu.addItem(each.toString().slice(0, 50), () => {
                 this.target = each;
                 this.setTargetSetter();
@@ -84,10 +81,11 @@ class ColorPaletteMorph extends Morph {
         }
     }
     setTargetSetter() {
-        var choices = this.target.colorSetters(), menu = new MenuMorph(this, 'choose target property:');
+        var choices = this.target.colorSetters(),
+            menu = new MenuMorph(this, "choose target property:");
 
-        choices.forEach(each => {
-            menu.addItem(each, () => this.targetSetter = each);
+        choices.forEach((each) => {
+            menu.addItem(each, () => (this.targetSetter = each));
         });
         if (choices.length === 1) {
             this.targetSetter = choices[0];
@@ -98,13 +96,3 @@ class ColorPaletteMorph extends Morph {
 }
 
 ColorPaletteMorph.uber = Morph.prototype;
-
-
-
-
-
-
-
-
-
-

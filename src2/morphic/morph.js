@@ -10,7 +10,7 @@ var FrameMorph;
 // var MenuMorph;
 var HandleMorph;
 var StringFieldMorph;
-var ColorPickerMorph;
+// var ColorPickerMorph;
 var SliderMorph;
 var ScrollFrameMorph;
 var InspectorMorph;
@@ -730,7 +730,7 @@ class Morph extends Node {
         correspondence between old and new morphs in the given dictionary.
         This dictionary will be used to update intra-composite references
         in the copy. See updateReferences().
-    
+
         Note: This default implementation copies ONLY morphs. If a morph
         stores morphs in other properties that it wants to copy, then it
         should override this method to do so. The same goes for morphs that
@@ -1311,21 +1311,21 @@ class Morph extends Node {
         look like. Insert these at the World level for fallback, and at lower
         levels in the Morphic tree (e.g. dialog boxes) for a more fine-grained
         control over the tabbing cycle.
-    
+
     Morph.prototype.nextTab = function (editField) {
         var next = this.nextEntryField(editField);
         editField.clearSelection();
         next.selectAll();
         next.edit();
     };
-    
+
     Morph.prototype.previousTab = function (editField) {
         var prev = this.previousEntryField(editField);
         editField.clearSelection();
         prev.selectAll();
         prev.edit();
     };
-    
+
     */
     // Morph events:
     escalateEvent(functionName, arg) {

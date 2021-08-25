@@ -907,7 +907,7 @@
 
     it renders the morph as a solid rectangle completely filling its
     area with its current color.
-    
+
     Notice how the coordinates for the fillRect() call are relative
     to the morph's own position: The rendered rectangle's origin is always
     located at (0, 0) regardless of the morph's actual position in the World.
@@ -918,20 +918,20 @@
     If your new morph also needs to determine its extent and, e.g. to
     encompass one or several other morphs, or arrange the layout of its
     submorphs, make sure to also override the default
-    
+
         fixLayout()
-    
+
     method.
-    
+
     NOTE: If you need to set the morph's extent inside, in order to avoid
     infinite recursion instead of calling morph.setExtent() - which will
     in turn call morph.fixLayout() again - directly modify the morph's
-    
+
         bounds
 
     property. Bounds is a rectable on which you can also use the same
     size-setters, e.g. by calling:
-    
+
         this.bounds.setExtent()
 
 
@@ -940,9 +940,9 @@
     In case your new morph needs to support pixel-perfect collision detection
     with other morphs or pointing devices such as the mouse or a stylus you
     can set the inherited attribute
-    
+
         isFreeForm = bool
-    
+
     to "true" (default is "false"). This makes sense the more your morph's
     visual shape diverges from a rectangle. For example, if you create a
     circular filled morph the default setting will register mouse-events
@@ -965,14 +965,14 @@
     cache your morph's current shape, so it doesn't have to be re-drawn onto a
     new Canvas element every time the mouse moves over its bounding box.
     For this you can set then inherited
-    
+
         isCachingImage = bool
-        
+
     attribute to "true" instead of the default "false" value. This will
     significantly speed up collision detection and smoothen animations that
     continuously perform collision detection. However, it will also consume
     more memory. Therefore it's best to use this setting with caution.
-    
+
     Snap! caches the shapes of sprites but not those of blocks. Instead it
     manages the insides of C- and E-shaped blocks through the morphic "holes"
     mechanism.
@@ -986,20 +986,20 @@
     registered.
 
     By default the inherited
-    
+
         holes = []
 
     property is an empty array. You can add one or more morphic Rectangle
     objects to this list, representing regions, in which occurring events will
     instead be passed on to the morph underneath.
-    
+
     Note that, same with the render() method, the coordinates of these
     rectangular holes must be specified relative to your morph's position.
 
     If you specify holes you might find the need to adjust their layout
     depending on the layout of your morph. To accomplish this you can override
     the inherited
-    
+
         fixHolesLayout()
 
     method.
@@ -1013,13 +1013,13 @@
     on a touch screen device, or you want the user to be able to "pinch" or
     otherwise distort a shape interactively. In all of these situations you'll
     want your morph to frequently rerender its shape.
-    
+
     You can accomplish this, by calling
 
         rerender()
 
     after every change to your morph's appearance that requires rerendering.
-    
+
     Such changes are usually only happening when the morph's dimensions or
     other visual properties - such as its color - changes.
 
@@ -1297,15 +1297,15 @@ var useBlurredShadows = true;
 
 const ZERO = new Point();
 
-/** 
- * @constant 
- * @type {Color} 
+/**
+ * @constant
+ * @type {Color}
  */
 const BLACK = new Color();
 
-/** 
- * @constant 
- * @type {Color} 
+/**
+ * @constant
+ * @type {Color}
  */
 const WHITE = new Color(255, 255, 255);
 const CLEAR = new Color(0, 0, 0, 0);
@@ -3120,7 +3120,7 @@ var FrameMorph;
 // var MenuMorph;
 var HandleMorph;
 var StringFieldMorph;
-var ColorPickerMorph;
+// var ColorPickerMorph;
 var SliderMorph;
 var ScrollFrameMorph;
 var InspectorMorph;
@@ -4814,7 +4814,7 @@ HandleMorph.prototype.renderCrosshairsOn = function (ctx, fract) {
         false
     );
     ctx.fill();
-    
+
     // solid black ring
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 1;
@@ -5265,204 +5265,204 @@ PenMorph.prototype.tree = function (level, length, angle) {
     }
 };
 
-// ColorPaletteMorph ///////////////////////////////////////////////////
+// // ColorPaletteMorph ///////////////////////////////////////////////////
 
-var ColorPaletteMorph;
+// var ColorPaletteMorph;
 
-// ColorPaletteMorph inherits from Morph:
+// // ColorPaletteMorph inherits from Morph:
 
-ColorPaletteMorph.prototype = new Morph();
-ColorPaletteMorph.prototype.constructor = ColorPaletteMorph;
-ColorPaletteMorph.uber = Morph.prototype;
+// ColorPaletteMorph.prototype = new Morph();
+// ColorPaletteMorph.prototype.constructor = ColorPaletteMorph;
+// ColorPaletteMorph.uber = Morph.prototype;
 
-// ColorPaletteMorph instance creation:
+// // ColorPaletteMorph instance creation:
 
-function ColorPaletteMorph(target, sizePoint) {
-    this.init(
-        target || null,
-        sizePoint || new Point(80, 50)
-    );
-}
+// function ColorPaletteMorph(target, sizePoint) {
+//     this.init(
+//         target || null,
+//         sizePoint || new Point(80, 50)
+//     );
+// }
 
-ColorPaletteMorph.prototype.init = function (target, size) {
-    ColorPaletteMorph.uber.init.call(this);
-    this.isCachingImage = true;
-    this.target = target;
-    this.targetSetter = 'color';
-    this.setExtent(size);
-    this.choice = null;
-};
+// ColorPaletteMorph.prototype.init = function (target, size) {
+//     ColorPaletteMorph.uber.init.call(this);
+//     this.isCachingImage = true;
+//     this.target = target;
+//     this.targetSetter = 'color';
+//     this.setExtent(size);
+//     this.choice = null;
+// };
 
-ColorPaletteMorph.prototype.render = function (ctx) {
-    var ext = this.extent(),
-        x, y, h, l;
+// ColorPaletteMorph.prototype.render = function (ctx) {
+//     var ext = this.extent(),
+//         x, y, h, l;
 
-    this.choice = BLACK;
-    for (x = 0; x <= ext.x; x += 1) {
-        h = 360 * x / ext.x;
-        for (y = 0; y <= ext.y; y += 1) {
-            l = 100 - (y / ext.y * 100);
-            ctx.fillStyle = 'hsl(' + h + ',100%,' + l + '%)';
-            ctx.fillRect(x, y, 1, 1);
-        }
-    }
-};
+//     this.choice = BLACK;
+//     for (x = 0; x <= ext.x; x += 1) {
+//         h = 360 * x / ext.x;
+//         for (y = 0; y <= ext.y; y += 1) {
+//             l = 100 - (y / ext.y * 100);
+//             ctx.fillStyle = 'hsl(' + h + ',100%,' + l + '%)';
+//             ctx.fillRect(x, y, 1, 1);
+//         }
+//     }
+// };
 
-ColorPaletteMorph.prototype.mouseMove = function (pos) {
-    this.choice = this.getPixelColor(pos);
-    this.updateTarget();
-};
+// ColorPaletteMorph.prototype.mouseMove = function (pos) {
+//     this.choice = this.getPixelColor(pos);
+//     this.updateTarget();
+// };
 
-ColorPaletteMorph.prototype.mouseDownLeft = function (pos) {
-    this.choice = this.getPixelColor(pos);
-    this.updateTarget();
-};
+// ColorPaletteMorph.prototype.mouseDownLeft = function (pos) {
+//     this.choice = this.getPixelColor(pos);
+//     this.updateTarget();
+// };
 
-ColorPaletteMorph.prototype.updateTarget = function () {
-    if (this.target instanceof Morph && this.choice !== null) {
-        if (this.target[this.targetSetter] instanceof Function) {
-            this.target[this.targetSetter](this.choice);
-        } else {
-            this.target[this.targetSetter] = this.choice;
-            this.target.rerender();
-        }
-    }
-};
+// ColorPaletteMorph.prototype.updateTarget = function () {
+//     if (this.target instanceof Morph && this.choice !== null) {
+//         if (this.target[this.targetSetter] instanceof Function) {
+//             this.target[this.targetSetter](this.choice);
+//         } else {
+//             this.target[this.targetSetter] = this.choice;
+//             this.target.rerender();
+//         }
+//     }
+// };
 
-// ColorPaletteMorph menu:
+// // ColorPaletteMorph menu:
 
-ColorPaletteMorph.prototype.developersMenu = function () {
-    var menu = ColorPaletteMorph.uber.developersMenu.call(this);
-    menu.addLine();
-    menu.addItem(
-        'set target',
-        "setTarget",
-        'choose another morph\nwhose color property\n will be' +
-            ' controlled by this one'
-    );
-    return menu;
-};
+// ColorPaletteMorph.prototype.developersMenu = function () {
+//     var menu = ColorPaletteMorph.uber.developersMenu.call(this);
+//     menu.addLine();
+//     menu.addItem(
+//         'set target',
+//         "setTarget",
+//         'choose another morph\nwhose color property\n will be' +
+//             ' controlled by this one'
+//     );
+//     return menu;
+// };
 
-ColorPaletteMorph.prototype.setTarget = function () {
-    var choices = this.overlappedMorphs(),
-        menu = new MenuMorph(this, 'choose target:');
+// ColorPaletteMorph.prototype.setTarget = function () {
+//     var choices = this.overlappedMorphs(),
+//         menu = new MenuMorph(this, 'choose target:');
 
-    choices.push(this.world());
-    choices.forEach(each => {
-        menu.addItem(each.toString().slice(0, 50), () => {
-            this.target = each;
-            this.setTargetSetter();
-        });
-    });
-    if (choices.length === 1) {
-        this.target = choices[0];
-        this.setTargetSetter();
-    } else if (choices.length > 0) {
-        menu.popUpAtHand(this.world());
-    }
-};
+//     choices.push(this.world());
+//     choices.forEach(each => {
+//         menu.addItem(each.toString().slice(0, 50), () => {
+//             this.target = each;
+//             this.setTargetSetter();
+//         });
+//     });
+//     if (choices.length === 1) {
+//         this.target = choices[0];
+//         this.setTargetSetter();
+//     } else if (choices.length > 0) {
+//         menu.popUpAtHand(this.world());
+//     }
+// };
 
-ColorPaletteMorph.prototype.setTargetSetter = function () {
-    var choices = this.target.colorSetters(),
-        menu = new MenuMorph(this, 'choose target property:');
+// ColorPaletteMorph.prototype.setTargetSetter = function () {
+//     var choices = this.target.colorSetters(),
+//         menu = new MenuMorph(this, 'choose target property:');
 
-    choices.forEach(each => {
-        menu.addItem(each, () => this.targetSetter = each);
-    });
-    if (choices.length === 1) {
-        this.targetSetter = choices[0];
-    } else if (choices.length > 0) {
-        menu.popUpAtHand(this.world());
-    }
-};
+//     choices.forEach(each => {
+//         menu.addItem(each, () => this.targetSetter = each);
+//     });
+//     if (choices.length === 1) {
+//         this.targetSetter = choices[0];
+//     } else if (choices.length > 0) {
+//         menu.popUpAtHand(this.world());
+//     }
+// };
 
-// GrayPaletteMorph ///////////////////////////////////////////////////
+// // GrayPaletteMorph ///////////////////////////////////////////////////
 
-var GrayPaletteMorph;
+// var GrayPaletteMorph;
 
-// GrayPaletteMorph inherits from ColorPaletteMorph:
+// // GrayPaletteMorph inherits from ColorPaletteMorph:
 
-GrayPaletteMorph.prototype = new ColorPaletteMorph();
-GrayPaletteMorph.prototype.constructor = GrayPaletteMorph;
-GrayPaletteMorph.uber = ColorPaletteMorph.prototype;
+// GrayPaletteMorph.prototype = new ColorPaletteMorph();
+// GrayPaletteMorph.prototype.constructor = GrayPaletteMorph;
+// GrayPaletteMorph.uber = ColorPaletteMorph.prototype;
 
-// GrayPaletteMorph instance creation:
+// // GrayPaletteMorph instance creation:
 
-function GrayPaletteMorph(target, sizePoint) {
-    this.init(
-        target || null,
-        sizePoint || new Point(80, 10)
-    );
-}
+// function GrayPaletteMorph(target, sizePoint) {
+//     this.init(
+//         target || null,
+//         sizePoint || new Point(80, 10)
+//     );
+// }
 
-GrayPaletteMorph.prototype.render = function (ctx) {
-    var ext = this.extent(),
-        gradient;
+// GrayPaletteMorph.prototype.render = function (ctx) {
+//     var ext = this.extent(),
+//         gradient;
 
-    this.choice = BLACK;
-    gradient = ctx.createLinearGradient(0, 0, ext.x, ext.y);
-    gradient.addColorStop(0, 'black');
-    gradient.addColorStop(1, 'white');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, ext.x, ext.y);
-};
+//     this.choice = BLACK;
+//     gradient = ctx.createLinearGradient(0, 0, ext.x, ext.y);
+//     gradient.addColorStop(0, 'black');
+//     gradient.addColorStop(1, 'white');
+//     ctx.fillStyle = gradient;
+//     ctx.fillRect(0, 0, ext.x, ext.y);
+// };
 
-// ColorPickerMorph ///////////////////////////////////////////////////
+// // ColorPickerMorph ///////////////////////////////////////////////////
 
-// ColorPickerMorph inherits from Morph:
+// // ColorPickerMorph inherits from Morph:
 
-ColorPickerMorph.prototype = new Morph();
-ColorPickerMorph.prototype.constructor = ColorPickerMorph;
-ColorPickerMorph.uber = Morph.prototype;
+// ColorPickerMorph.prototype = new Morph();
+// ColorPickerMorph.prototype.constructor = ColorPickerMorph;
+// ColorPickerMorph.uber = Morph.prototype;
 
-// ColorPickerMorph instance creation:
+// // ColorPickerMorph instance creation:
 
-function ColorPickerMorph(defaultColor) {
-    this.init(defaultColor || WHITE);
-}
+// function ColorPickerMorph(defaultColor) {
+//     this.init(defaultColor || WHITE);
+// }
 
-ColorPickerMorph.prototype.init = function (defaultColor) {
-    this.choice = defaultColor;
-    ColorPickerMorph.uber.init.call(this);
-    this.color = WHITE;
-    this.setExtent(new Point(80, 80));
-};
+// ColorPickerMorph.prototype.init = function (defaultColor) {
+//     this.choice = defaultColor;
+//     ColorPickerMorph.uber.init.call(this);
+//     this.color = WHITE;
+//     this.setExtent(new Point(80, 80));
+// };
 
-ColorPickerMorph.prototype.fixLayout = function () {
-    var cpal, gpal, x, y;
+// ColorPickerMorph.prototype.fixLayout = function () {
+//     var cpal, gpal, x, y;
 
-    this.children.forEach(child => child.destroy());
-    this.children = [];
-    this.feedback = new Morph();
-    this.feedback.color = this.choice;
-    this.feedback.setExtent(new Point(20, 20));
-    cpal = new ColorPaletteMorph(
-        this.feedback,
-        new Point(this.width(), 50)
-    );
-    gpal = new GrayPaletteMorph(
-        this.feedback,
-        new Point(this.width(), 5)
-    );
-    cpal.setPosition(this.bounds.origin);
-    this.add(cpal);
-    gpal.setPosition(cpal.bottomLeft());
-    this.add(gpal);
-    x = (gpal.left() +
-        Math.floor((gpal.width() - this.feedback.width()) / 2));
-    y = gpal.bottom() + Math.floor((this.bottom() -
-        gpal.bottom() - this.feedback.height()) / 2);
-    this.feedback.setPosition(new Point(x, y));
-    this.add(this.feedback);
-};
+//     this.children.forEach(child => child.destroy());
+//     this.children = [];
+//     this.feedback = new Morph();
+//     this.feedback.color = this.choice;
+//     this.feedback.setExtent(new Point(20, 20));
+//     cpal = new ColorPaletteMorph(
+//         this.feedback,
+//         new Point(this.width(), 50)
+//     );
+//     gpal = new GrayPaletteMorph(
+//         this.feedback,
+//         new Point(this.width(), 5)
+//     );
+//     cpal.setPosition(this.bounds.origin);
+//     this.add(cpal);
+//     gpal.setPosition(cpal.bottomLeft());
+//     this.add(gpal);
+//     x = (gpal.left() +
+//         Math.floor((gpal.width() - this.feedback.width()) / 2));
+//     y = gpal.bottom() + Math.floor((this.bottom() -
+//         gpal.bottom() - this.feedback.height()) / 2);
+//     this.feedback.setPosition(new Point(x, y));
+//     this.add(this.feedback);
+// };
 
-ColorPickerMorph.prototype.getChoice = function () {
-    return this.feedback.color;
-};
+// ColorPickerMorph.prototype.getChoice = function () {
+//     return this.feedback.color;
+// };
 
-ColorPickerMorph.prototype.rootForGrab = function () {
-    return this;
-};
+// ColorPickerMorph.prototype.rootForGrab = function () {
+//     return this;
+// };
 
 // // BlinkerMorph ////////////////////////////////////////////////////////
 
@@ -5534,7 +5534,7 @@ ColorPickerMorph.prototype.rootForGrab = function () {
 //     // override inherited defaults
 //     ls = fontHeight(this.target.fontSize);
 //     this.setExtent(new Point(Math.max(Math.floor(ls / 20), 1), ls));
-    
+
 //     if (this.target instanceof TextMorph &&
 //             (this.target.alignment !== 'left')) {
 //         this.target.setAlignmentToLeft();
@@ -5579,7 +5579,7 @@ ColorPickerMorph.prototype.rootForGrab = function () {
 //         shift = event.shiftKey,
 //         singleLineText = this.target instanceof StringMorph,
 //         dest;
- 
+
 //     if (!isNil(this.target.receiver) && (event.ctrlKey || event.metaKey)) {
 //         if (keyName === 'd') {
 //             event.preventDefault();
@@ -5727,7 +5727,7 @@ ColorPickerMorph.prototype.rootForGrab = function () {
 // CursorMorph.prototype.updateTextAreaPosition = function () {
 //     var pos = getDocumentPositionOf(this.target.world().worldCanvas),
 //         origin = this.target.bounds.origin.add(new Point(pos.x, pos.y));
- 
+
 //     function number2px (n) {
 //         return Math.ceil(n) + 'px';
 //     }
@@ -10203,7 +10203,7 @@ MenuItemMorph.prototype.popUpSubmenu = function () {
         scroller.setHeight(world.bottom() - scroller.top() - 6);
         scroller.adjustScrollBars(); // ?
      }
-    
+
     menu.add(this.action);
     menu.submenu = this.action;
     menu.submenu.world = menu.world; // keyboard control
@@ -12008,7 +12008,7 @@ WorldMorph.prototype.condenseDamages = function () {
     /* // overly eager reduction algorithm, commented out for performance
     var again = true,
         size = this.broken.length;
-    
+
     while (again) {
         this.broken = condense(this.broken);
         again = (this.broken.length < size);
