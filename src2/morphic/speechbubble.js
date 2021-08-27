@@ -1,8 +1,10 @@
-/** 
+/* global Morph, BoxMorph, TextMorph, Point, Color  */
+
+/**
  * I am a comic-style speech bubble that can display either a string,
  * a Morph, a Canvas or a toString() representation of anything else.
  * If I am invoked using popUp() I behave like a tool tip.
- * 
+ *
  * @extends BlinkerMorph
  */
 class SpeechBubbleMorph extends BoxMorph {
@@ -22,7 +24,7 @@ class SpeechBubbleMorph extends BoxMorph {
         SpeechBubbleMorph.prototype.init.call(
             this, contents, color, edge, border, borderColor,padding, isThought, noShadow)
     }
-    
+
     init(contents,
         color,
         edge,

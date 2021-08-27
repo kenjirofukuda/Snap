@@ -1,19 +1,15 @@
-// DialMorph //////////////////////////////////////////////////////
+/* global Point, Color, Morph, MorphicPreferences */
 
-// I am a knob than can be turned to select a number
-
-// var DialMorph;
-
-// // DialMorph inherits from Morph:
-
-// DialMorph.prototype = new Morph();
-// ;
-// DialMorph.uber = Morph.prototype;
+/**
+ * I am a knob than can be turned to select a number
+ *
+ * @extends Morph
+ */
 
 class DialMorph extends Morph {
     constructor(min, max, value, tick, radius) {
         super();
-        (min, max, value, tick, radius);
+        DialMorph.prototype.init.call(this, min, max, value, tick, radius);
     }
     init(min, max, value, tick, radius) {
         this.target = null;
@@ -41,19 +37,31 @@ class DialMorph extends Morph {
             if (this.value < this.tick) {
                 this.value = this.min;
             } else {
-                this.value -= this.value % this.tick % this.value;
+                this.value -= (this.value % this.tick) % this.value;
             }
         }
         this.changed();
-        if (noUpdate) { return; }
+        if (noUpdate) {
+            return;
+        }
         this.updateTarget();
     }
     getValueOf(point) {
-        var range = this.max - this.min, center = this.center(), deltaX = point.x - center.x, deltaY = center.y - point.y, angle = Math.abs(deltaX) < 0.001 ? (deltaY < 0 ? 90 : 270)
-            : Math.round(
-                (deltaX >= 0 ? 0 : 180)
-                - (Math.atan(deltaY / deltaX) * 57.2957795131)
-            ), value = angle + 90 % 360, ratio = value / 360;
+        var range = this.max - this.min,
+            center = this.center(),
+            deltaX = point.x - center.x,
+            deltaY = center.y - point.y,
+            angle =
+                Math.abs(deltaX) < 0.001
+                    ? deltaY < 0
+                        ? 90
+                        : 270
+                    : Math.round(
+                          (deltaX >= 0 ? 0 : 180) -
+                              Math.atan(deltaY / deltaX) * 57.2957795131
+                      ),
+            value = angle + (90 % 360),
+            ratio = value / 360;
         return range * ratio + this.min;
     }
     setExtent(aPoint) {
@@ -62,7 +70,18 @@ class DialMorph extends Morph {
         super.setExtent(new Point(size, size));
     }
     render(ctx) {
-        var i, angle, x1, y1, x2, y2, light = this.color.lighter().toString(), range = this.max - this.min, ticks = range / this.tick, face = this.radius * 0.75, inner = face * 0.85, outer = face * 0.95;
+        var i,
+            angle,
+            x1,
+            y1,
+            x2,
+            y2,
+            light = this.color.lighter().toString(),
+            range = this.max - this.min,
+            ticks = range / this.tick,
+            face = this.radius * 0.75,
+            inner = face * 0.85,
+            outer = face * 0.95;
 
         // draw a light border:
         ctx.fillStyle = light;
@@ -81,29 +100,15 @@ class DialMorph extends Morph {
         // fill circle:
         ctx.fillStyle = this.color.toString();
         ctx.beginPath();
-        ctx.arc(
-            this.radius,
-            this.radius,
-            face,
-            0,
-            2 * Math.PI,
-            false
-        );
+        ctx.arc(this.radius, this.radius, face, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
 
         // fill value
-        angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+        angle = ((this.value - this.min) * (Math.PI * 2)) / range - Math.PI / 2;
         ctx.fillStyle = (this.fillColor || this.color.darker()).toString();
         ctx.beginPath();
-        ctx.arc(
-            this.radius,
-            this.radius,
-            face,
-            Math.PI / -2,
-            angle,
-            false
-        );
+        ctx.arc(this.radius, this.radius, face, Math.PI / -2, angle, false);
         ctx.lineTo(this.radius, this.radius);
         ctx.closePath();
         ctx.fill();
@@ -112,7 +117,7 @@ class DialMorph extends Morph {
         ctx.strokeStyle = new Color(35, 35, 35).toString();
         ctx.lineWidth = 1;
         for (i = 0; i < ticks; i += 1) {
-            angle = (i - 3) * (Math.PI * 2) / ticks - Math.PI / 2;
+            angle = ((i - 3) * (Math.PI * 2)) / ticks - Math.PI / 2;
             ctx.beginPath();
             x1 = this.radius + Math.cos(angle) * inner;
             y1 = this.radius + Math.sin(angle) * inner;
@@ -125,23 +130,16 @@ class DialMorph extends Morph {
 
         // draw a filled center:
         inner = face * 0.05;
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.arc(
-            this.radius,
-            this.radius,
-            inner,
-            0,
-            2 * Math.PI,
-            false
-        );
+        ctx.arc(this.radius, this.radius, inner, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.fill();
 
         // draw the inner hand:
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
-        angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+        angle = ((this.value - this.min) * (Math.PI * 2)) / range - Math.PI / 2;
         outer = face * 0.8;
         x1 = this.radius + Math.cos(angle) * inner;
         y1 = this.radius + Math.sin(angle) * inner;
@@ -156,21 +154,14 @@ class DialMorph extends Morph {
         inner = inner * 2;
         x2 = this.radius + Math.cos(angle) * (outer + inner);
         y2 = this.radius + Math.sin(angle) * (outer + inner);
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.arc(
-            x2,
-            y2,
-            inner,
-            0,
-            2 * Math.PI,
-            false
-        );
+        ctx.arc(x2, y2, inner, 0, 2 * Math.PI, false);
         ctx.closePath();
         ctx.stroke();
 
         // draw the outer hand:
-        angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+        angle = ((this.value - this.min) * (Math.PI * 2)) / range - Math.PI / 2;
         x1 = this.radius + Math.cos(angle) * face;
         y1 = this.radius + Math.sin(angle) * face;
         x2 = this.radius + Math.cos(angle) * (this.radius - 1);
@@ -182,7 +173,7 @@ class DialMorph extends Morph {
         ctx.strokeStyle = light;
         ctx.stroke();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = "black";
         ctx.stroke();
 
         // draw arrow tip:
@@ -201,7 +192,7 @@ class DialMorph extends Morph {
         ctx.strokeStyle = light;
         ctx.stroke();
         ctx.lineWidth = 1;
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = "black";
         ctx.stroke();
         ctx.fill();
     }
@@ -224,18 +215,19 @@ class DialMorph extends Morph {
         var menu = super.developersMenu();
         menu.addLine();
         menu.addItem(
-            'set target',
+            "set target",
             "setTarget",
-            'select another morph\nwhose numerical property\nwill be ' +
-            'controlled by this one'
+            "select another morph\nwhose numerical property\nwill be " +
+                "controlled by this one"
         );
         return menu;
     }
     setTarget() {
-        var choices = this.overlappedMorphs(), menu = new MenuMorph(this, 'choose target:');
+        var choices = this.overlappedMorphs(),
+            menu = new MenuMorph(this, "choose target:");
 
         choices.push(this.world());
-        choices.forEach(each => {
+        choices.forEach((each) => {
             menu.addItem(each.toString().slice(0, 50), () => {
                 this.target = each;
                 this.setTargetSetter();
@@ -249,10 +241,11 @@ class DialMorph extends Morph {
         }
     }
     setTargetSetter() {
-        var choices = this.target.numericalSetters(), menu = new MenuMorph(this, 'choose target property:');
+        var choices = this.target.numericalSetters(),
+            menu = new MenuMorph(this, "choose target property:");
 
-        choices.forEach(each => {
-            menu.addItem(each, () => this.action = each);
+        choices.forEach((each) => {
+            menu.addItem(each, () => (this.action = each));
         });
         if (choices.length === 1) {
             this.action = choices[0];
@@ -262,27 +255,16 @@ class DialMorph extends Morph {
     }
     updateTarget() {
         if (this.action) {
-            if (typeof this.action === 'function') {
+            if (typeof this.action === "function") {
                 this.action.call(this.target, this.value);
-            } else { // assume it's a String
+            } else {
+                // assume it's a String
                 this.target[this.action](this.value);
             }
         }
     }
 }
 
-
-
-
-
-
-
 // DialMorph stepping:
 
 DialMorph.prototype.step = null;
-
-
-
-
-
-

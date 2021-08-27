@@ -8,7 +8,7 @@ var HandMorph;
 // var ShadowMorph;
 var FrameMorph;
 // var MenuMorph;
-var HandleMorph;
+// var HandleMorph;
 var StringFieldMorph;
 // var ColorPickerMorph;
 var SliderMorph;

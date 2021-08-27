@@ -3118,7 +3118,7 @@ var HandMorph;
 // var ShadowMorph;
 var FrameMorph;
 // var MenuMorph;
-var HandleMorph;
+// var HandleMorph;
 var StringFieldMorph;
 // var ColorPickerMorph;
 var SliderMorph;
@@ -4714,556 +4714,556 @@ var TextMorph;
 //     return null;
 // };
 
-// HandleMorph ////////////////////////////////////////////////////////
-
-// I am a resize / move handle that can be attached to any Morph
-
-// HandleMorph inherits from Morph:
-
-HandleMorph.prototype = new Morph();
-HandleMorph.prototype.constructor = HandleMorph;
-HandleMorph.uber = Morph.prototype;
-
-// HandleMorph instance creation:
-
-function HandleMorph(target, minX, minY, insetX, insetY, type) {
-    // if insetY is missing, it will be the same as insetX
-    this.init(target, minX, minY, insetX, insetY, type);
-}
-
-HandleMorph.prototype.init = function (
-    target,
-    minX,
-    minY,
-    insetX,
-    insetY,
-    type
-) {
-    var size = MorphicPreferences.handleSize;
-    this.target = target || null;
-    this.minExtent = new Point(minX || 0, minY || 0);
-    this.inset = new Point(insetX || 0, insetY || insetX || 0);
-    this.type =  type || 'resize'; // also: 'move', 'moveCenter', 'movePivot'
-    this.isHighlighted = false;
-    HandleMorph.uber.init.call(this);
-    this.color = WHITE;
-    this.isDraggable = false;
-    if (this.type === 'movePivot') {
-        size *= 2;
-    }
-    this.setExtent(new Point(size, size));
-    this.fixLayout();
-};
-
-// HandleMorph drawing:
-
-HandleMorph.prototype.fixLayout = function () {
-    if (this.target) {
-        if (this.type === 'moveCenter') {
-            this.setCenter(this.target.center());
-        } else if (this.type === 'movePivot') {
-            this.setCenter(this.target.rotationCenter());
-        } else { // 'resize', 'move'
-            this.setPosition(
-                this.target.bottomRight().subtract(
-                    this.extent().add(this.inset)
-                )
-            );
-        }
-        this.target.add(this);
-        this.target.changed();
-    }
-};
-
-HandleMorph.prototype.render = function (ctx) {
-    if (this.type === 'movePivot') {
-        if (this.isHighlighted) {
-            this.renderCrosshairsOn(ctx, 0.5);
-        } else {
-            this.renderCrosshairsOn(ctx, 0.6);
-        }
-    } else {
-        if (this.isHighlighted) {
-            this.renderHandleOn(
-                ctx,
-                new Color(100, 100, 255),
-                WHITE
-            );
-        } else {
-            this.renderHandleOn(
-                ctx,
-                this.color,
-                new Color(100, 100, 100)
-            );
-        }
-    }
-};
-
-HandleMorph.prototype.renderCrosshairsOn = function (ctx, fract) {
-    var r = this.width() / 2;
-
-    // semi-transparent white background blob
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-    ctx.beginPath();
-    ctx.arc(
-        r,
-        r,
-        r * 0.9,
-        radians(0),
-        radians(360),
-        false
-    );
-    ctx.fill();
-
-    // solid black ring
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.arc(
-        r,
-        r,
-        r * fract,
-        radians(0),
-        radians(360),
-        false
-    );
-    ctx.stroke();
-
-    // vertically centered horizontal line
-    ctx.moveTo(0, r);
-    ctx.lineTo(this.width(), r);
-    ctx.stroke();
-
-    // horizontally centered vertical line
-    ctx.moveTo(r, 0);
-    ctx.lineTo(r, this.height());
-    ctx.stroke();
-};
-
-HandleMorph.prototype.renderHandleOn = function (
-    ctx,
-    color,
-    shadowColor
-) {
-    var isSquare = (this.type.indexOf('move') === 0),
-        p1 = new Point(0, this.height()), // bottom left
-        p2 = new Point(this.width(), 0), // top right
-        p11, p22, i;
-
-    ctx.lineWidth = 1;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = color.toString();
-
-    if (isSquare) {
-        p11 = p1.copy();
-        p22 = p2.copy();
-        for (i = 0; i <= this.height(); i = i + 6) {
-            p11.y = p1.y - i;
-            p22.y = p2.y - i;
-
-            ctx.beginPath();
-            ctx.moveTo(p11.x, p11.y);
-            ctx.lineTo(p22.x, p22.y);
-            ctx.closePath();
-            ctx.stroke();
-        }
-    }
-
-    p11 = p1.copy();
-    p22 = p2.copy();
-    for (i = 0; i <= this.width(); i = i + 6) {
-        p11.x = p1.x + i;
-        p22.x = p2.x + i;
-
-        ctx.beginPath();
-        ctx.moveTo(p11.x, p11.y);
-        ctx.lineTo(p22.x, p22.y);
-        ctx.closePath();
-        ctx.stroke();
-    }
-    ctx.strokeStyle = shadowColor.toString();
-
-    if (isSquare) {
-        p11 = p1.copy();
-        p22 = p2.copy();
-        for (i = -2; i <= this.height(); i = i + 6) {
-            p11.y = p1.y - i;
-            p22.y = p2.y - i;
-
-            ctx.beginPath();
-            ctx.moveTo(p11.x, p11.y);
-            ctx.lineTo(p22.x, p22.y);
-            ctx.closePath();
-            ctx.stroke();
-        }
-    }
-
-    p11 = p1.copy();
-    p22 = p2.copy();
-    for (i = 2; i <= this.width(); i = i + 6) {
-        p11.x = p1.x + i;
-        p22.x = p2.x + i;
-
-        ctx.beginPath();
-        ctx.moveTo(p11.x, p11.y);
-        ctx.lineTo(p22.x, p22.y);
-        ctx.closePath();
-        ctx.stroke();
-    }
-};
-
-// HandleMorph stepping:
-
-HandleMorph.prototype.step = null;
-
-HandleMorph.prototype.mouseDownLeft = function (pos) {
-    var world = this.root(),
-        offset;
-
-    if (!this.target) {
-        return null;
-    }
-    if (this.type.indexOf('move') === 0) {
-        offset = pos.subtract(this.center());
-    } else {
-        offset = pos.subtract(this.bounds.origin);
-    }
-
-    this.step = () => {
-        var newPos, newExt;
-        if (world.hand.mouseButton) {
-            newPos = world.hand.bounds.origin.copy().subtract(offset);
-            if (this.type === 'resize') {
-                newExt = newPos.add(
-                    this.extent().add(this.inset)
-                ).subtract(this.target.bounds.origin);
-                newExt = newExt.max(this.minExtent);
-                this.target.setExtent(newExt);
-
-                this.setPosition(
-                    this.target.bottomRight().subtract(
-                        this.extent().add(this.inset)
-                    )
-                );
-            } else if (this.type === 'moveCenter') {
-                this.target.setCenter(newPos);
-            } else if (this.type === 'movePivot') {
-                this.target.setPivot(newPos);
-                this.setCenter(this.target.rotationCenter());
-            } else { // type === 'move'
-                this.target.setPosition(
-                    newPos.subtract(this.target.extent())
-                        .add(this.extent())
-                );
-            }
-        } else {
-            this.step = null;
-        }
-    };
-
-    if (!this.target.step) {
-        this.target.step = nop;
-    }
-};
-
-// HandleMorph dragging and dropping:
-
-HandleMorph.prototype.rootForGrab = function () {
-    return this;
-};
-
-// HandleMorph events:
-
-HandleMorph.prototype.mouseEnter = function () {
-    this.isHighlighted = true;
-    this.changed();
-};
-
-HandleMorph.prototype.mouseLeave = function () {
-    this.isHighlighted = false;
-    this.changed();
-};
-
-// HandleMorph menu:
-
-HandleMorph.prototype.attach = function () {
-    var choices = this.overlappedMorphs(),
-        menu = new MenuMorph(this, 'choose target:');
-
-    choices.forEach(each => {
-        menu.addItem(each.toString().slice(0, 50), () => {
-            this.isDraggable = false;
-            this.target = each;
-            this.fixLayout();
-        });
-    });
-    if (choices.length > 0) {
-        menu.popUpAtHand(this.world());
-    }
-};
-
-// PenMorph ////////////////////////////////////////////////////////////
-
-// I am a simple LOGO-wise turtle.
-
-// PenMorph: referenced constructors
-
-var PenMorph;
-
-// PenMorph inherits from Morph:
-
-PenMorph.prototype = new Morph();
-PenMorph.prototype.constructor = PenMorph;
-PenMorph.uber = Morph.prototype;
-
-// PenMorph instance creation:
-
-function PenMorph() {
-    this.init();
-}
-
-PenMorph.prototype.init = function () {
-    var size = MorphicPreferences.handleSize * 4;
-
-    // additional properties:
-    this.isWarped = false; // internal optimization
-    this.heading = 0;
-    this.isDown = true;
-    this.size = 1;
-    this.penPoint = 'tip'; // or 'center"
-    this.penBounds = null; // rect around the visible arrow shape
-
-    HandleMorph.uber.init.call(this);
-    this.setExtent(new Point(size, size));
-};
-
-// PenMorph updating - optimized for warping, i.e atomic recursion
-
-PenMorph.prototype.changed = function () {
-    if (this.isWarped) {return; }
-    PenMorph.uber.changed.call(this);
-
-};
-
-// PenMorph display:
-
-PenMorph.prototype.render = function (ctx, facing) {
-    // my orientation can be overridden with the "facing" parameter to
-    // implement Scratch-style rotation styles
-
-    var start, dest, left, right, len,
-        direction = facing || this.heading;
-
-    len = this.width() / 2;
-    start = this.center().subtract(this.bounds.origin);
-
-    if (this.penPoint === 'tip') {
-        dest = start.distanceAngle(len * 0.75, direction - 180);
-        left = start.distanceAngle(len, direction + 195);
-        right = start.distanceAngle(len, direction - 195);
-    } else { // 'middle'
-        dest = start.distanceAngle(len * 0.75, direction);
-        left = start.distanceAngle(len * 0.33, direction + 230);
-        right = start.distanceAngle(len * 0.33, direction - 230);
-    }
-
-    // cache penBounds
-    this.penBounds = new Rectangle(
-        Math.min(start.x, dest.x, left.x, right.x),
-        Math.min(start.y, dest.y, left.y, right.y),
-        Math.max(start.x, dest.x, left.x, right.x),
-        Math.max(start.y, dest.y, left.y, right.y)
-    );
-
-    // draw arrow shape
-    ctx.fillStyle = this.color.toString();
-    ctx.beginPath();
-
-    ctx.moveTo(start.x, start.y);
-    ctx.lineTo(left.x, left.y);
-    ctx.lineTo(dest.x, dest.y);
-    ctx.lineTo(right.x, right.y);
-
-    ctx.closePath();
-    ctx.strokeStyle = 'white';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-    ctx.fill();
-};
-
-// PenMorph access:
-
-PenMorph.prototype.setHeading = function (degrees) {
-    this.heading = ((+degrees % 360) + 360) % 360;
-    this.fixLayout();
-    this.rerender();
-};
-
-PenMorph.prototype.numericalSetters = function () {
-    // for context menu demo purposes
-    return [
-        'setLeft',
-        'setTop',
-        'setWidth',
-        'setHeight',
-        'setAlphaScaled',
-        'setHeading'
-    ];
-};
-
-// PenMorph menu:
-
-PenMorph.prototype.developersMenu = function () {
-    var menu = PenMorph.uber.developersMenu.call(this);
-    menu.addLine();
-    menu.addItem(
-        'set rotation',
-        "setRotation",
-        'interactively turn this morph\nusing a dial widget'
-    );
-    return menu;
-};
-
-PenMorph.prototype.setRotation = function () {
-    var menu, dial,
-    	name = this.name || this.constructor.name;
-    if (name.length > 10) {
-    	name = name.slice(0, 9) + '...';
-    }
-    menu = new MenuMorph(this, name);
-    dial = new DialMorph(null, null, this.heading);
-    dial.rootForGrab = () => dial;
-    dial.target = this;
-    dial.action = 'setHeading';
-    menu.items.push(dial);
-    menu.addLine();
-    menu.addItem('(90) right', () => this.setHeading(90));
-    menu.addItem('(-90) left', () => this.setHeading(-90));
-    menu.addItem('(0) up', () => this.setHeading(0));
-    menu.addItem('(180) down', () => this.setHeading(180));
-    menu.isDraggable = true;
-    menu.popUpAtHand(this.world());
-};
-
-// PenMorph drawing:
-
-PenMorph.prototype.drawLine = function (start, dest) {
-    var context = this.parent.penTrails().getContext('2d'),
-        from = start.subtract(this.parent.bounds.origin),
-        to = dest.subtract(this.parent.bounds.origin);
-    if (this.isDown) {
-        context.lineWidth = this.size;
-        context.strokeStyle = this.color.toString();
-        context.lineCap = 'round';
-        context.lineJoin = 'round';
-        context.beginPath();
-        context.moveTo(from.x, from.y);
-        context.lineTo(to.x, to.y);
-        context.stroke();
-        if (this.isWarped === false) {
-            this.world().broken.push(
-                start.rectangle(dest).expandBy(
-                    Math.max(this.size / 2, 1)
-                ).intersect(this.parent.visibleBounds()).spread()
-            );
-        }
-    }
-};
-
-// PenMorph turtle ops:
-
-PenMorph.prototype.turn = function (degrees) {
-    this.setHeading(this.heading + parseFloat(degrees));
-};
-
-PenMorph.prototype.forward = function (steps) {
-    var start = this.center(),
-        dest,
-        dist = parseFloat(steps);
-    if (dist >= 0) {
-        dest = this.position().distanceAngle(dist, this.heading);
-    } else {
-        dest = this.position().distanceAngle(
-            Math.abs(dist),
-            (this.heading - 180)
-        );
-    }
-    this.setPosition(dest);
-    this.drawLine(start, this.center());
-};
-
-PenMorph.prototype.down = function () {
-    this.isDown = true;
-};
-
-PenMorph.prototype.up = function () {
-    this.isDown = false;
-};
-
-PenMorph.prototype.clear = function () {
-    this.parent.rerender();
-};
-
-// PenMorph optimization for atomic recursion:
-
-PenMorph.prototype.startWarp = function () {
-    this.isWarped = true;
-};
-
-PenMorph.prototype.endWarp = function () {
-    this.isWarped = false;
-    this.parent.changed();
-};
-
-PenMorph.prototype.warp = function (fun) {
-    this.startWarp();
-    fun.call(this);
-    this.endWarp();
-};
-
-PenMorph.prototype.warpOp = function (selector, argsArray) {
-    this.startWarp();
-    this[selector].apply(this, argsArray);
-    this.endWarp();
-};
-
-// PenMorph demo ops:
-// try these with WARP eg.: this.warp(function () {tree(12, 120, 20)})
-
-PenMorph.prototype.warpSierpinski = function (length, min) {
-    this.warpOp('sierpinski', [length, min]);
-};
-
-PenMorph.prototype.sierpinski = function (length, min) {
-    var i;
-    if (length > min) {
-        for (i = 0; i < 3; i += 1) {
-            this.sierpinski(length * 0.5, min);
-            this.turn(120);
-            this.forward(length);
-        }
-    }
-};
-
-PenMorph.prototype.warpTree = function (level, length, angle) {
-    this.warpOp('tree', [level, length, angle]);
-};
-
-PenMorph.prototype.tree = function (level, length, angle) {
-    if (level > 0) {
-        this.size = level;
-        this.forward(length);
-        this.turn(angle);
-        this.tree(level - 1, length * 0.75, angle);
-        this.turn(angle * -2);
-        this.tree(level - 1, length * 0.75, angle);
-        this.turn(angle);
-        this.forward(-length);
-    }
-};
+// // HandleMorph ////////////////////////////////////////////////////////
+
+// // I am a resize / move handle that can be attached to any Morph
+
+// // HandleMorph inherits from Morph:
+
+// HandleMorph.prototype = new Morph();
+// HandleMorph.prototype.constructor = HandleMorph;
+// HandleMorph.uber = Morph.prototype;
+
+// // HandleMorph instance creation:
+
+// function HandleMorph(target, minX, minY, insetX, insetY, type) {
+//     // if insetY is missing, it will be the same as insetX
+//     this.init(target, minX, minY, insetX, insetY, type);
+// }
+
+// HandleMorph.prototype.init = function (
+//     target,
+//     minX,
+//     minY,
+//     insetX,
+//     insetY,
+//     type
+// ) {
+//     var size = MorphicPreferences.handleSize;
+//     this.target = target || null;
+//     this.minExtent = new Point(minX || 0, minY || 0);
+//     this.inset = new Point(insetX || 0, insetY || insetX || 0);
+//     this.type =  type || 'resize'; // also: 'move', 'moveCenter', 'movePivot'
+//     this.isHighlighted = false;
+//     HandleMorph.uber.init.call(this);
+//     this.color = WHITE;
+//     this.isDraggable = false;
+//     if (this.type === 'movePivot') {
+//         size *= 2;
+//     }
+//     this.setExtent(new Point(size, size));
+//     this.fixLayout();
+// };
+
+// // HandleMorph drawing:
+
+// HandleMorph.prototype.fixLayout = function () {
+//     if (this.target) {
+//         if (this.type === 'moveCenter') {
+//             this.setCenter(this.target.center());
+//         } else if (this.type === 'movePivot') {
+//             this.setCenter(this.target.rotationCenter());
+//         } else { // 'resize', 'move'
+//             this.setPosition(
+//                 this.target.bottomRight().subtract(
+//                     this.extent().add(this.inset)
+//                 )
+//             );
+//         }
+//         this.target.add(this);
+//         this.target.changed();
+//     }
+// };
+
+// HandleMorph.prototype.render = function (ctx) {
+//     if (this.type === 'movePivot') {
+//         if (this.isHighlighted) {
+//             this.renderCrosshairsOn(ctx, 0.5);
+//         } else {
+//             this.renderCrosshairsOn(ctx, 0.6);
+//         }
+//     } else {
+//         if (this.isHighlighted) {
+//             this.renderHandleOn(
+//                 ctx,
+//                 new Color(100, 100, 255),
+//                 WHITE
+//             );
+//         } else {
+//             this.renderHandleOn(
+//                 ctx,
+//                 this.color,
+//                 new Color(100, 100, 100)
+//             );
+//         }
+//     }
+// };
+
+// HandleMorph.prototype.renderCrosshairsOn = function (ctx, fract) {
+//     var r = this.width() / 2;
+
+//     // semi-transparent white background blob
+//     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+//     ctx.beginPath();
+//     ctx.arc(
+//         r,
+//         r,
+//         r * 0.9,
+//         radians(0),
+//         radians(360),
+//         false
+//     );
+//     ctx.fill();
+
+//     // solid black ring
+//     ctx.strokeStyle = 'black';
+//     ctx.lineWidth = 1;
+//     ctx.beginPath();
+//     ctx.arc(
+//         r,
+//         r,
+//         r * fract,
+//         radians(0),
+//         radians(360),
+//         false
+//     );
+//     ctx.stroke();
+
+//     // vertically centered horizontal line
+//     ctx.moveTo(0, r);
+//     ctx.lineTo(this.width(), r);
+//     ctx.stroke();
+
+//     // horizontally centered vertical line
+//     ctx.moveTo(r, 0);
+//     ctx.lineTo(r, this.height());
+//     ctx.stroke();
+// };
+
+// HandleMorph.prototype.renderHandleOn = function (
+//     ctx,
+//     color,
+//     shadowColor
+// ) {
+//     var isSquare = (this.type.indexOf('move') === 0),
+//         p1 = new Point(0, this.height()), // bottom left
+//         p2 = new Point(this.width(), 0), // top right
+//         p11, p22, i;
+
+//     ctx.lineWidth = 1;
+//     ctx.lineCap = 'round';
+//     ctx.strokeStyle = color.toString();
+
+//     if (isSquare) {
+//         p11 = p1.copy();
+//         p22 = p2.copy();
+//         for (i = 0; i <= this.height(); i = i + 6) {
+//             p11.y = p1.y - i;
+//             p22.y = p2.y - i;
+
+//             ctx.beginPath();
+//             ctx.moveTo(p11.x, p11.y);
+//             ctx.lineTo(p22.x, p22.y);
+//             ctx.closePath();
+//             ctx.stroke();
+//         }
+//     }
+
+//     p11 = p1.copy();
+//     p22 = p2.copy();
+//     for (i = 0; i <= this.width(); i = i + 6) {
+//         p11.x = p1.x + i;
+//         p22.x = p2.x + i;
+
+//         ctx.beginPath();
+//         ctx.moveTo(p11.x, p11.y);
+//         ctx.lineTo(p22.x, p22.y);
+//         ctx.closePath();
+//         ctx.stroke();
+//     }
+//     ctx.strokeStyle = shadowColor.toString();
+
+//     if (isSquare) {
+//         p11 = p1.copy();
+//         p22 = p2.copy();
+//         for (i = -2; i <= this.height(); i = i + 6) {
+//             p11.y = p1.y - i;
+//             p22.y = p2.y - i;
+
+//             ctx.beginPath();
+//             ctx.moveTo(p11.x, p11.y);
+//             ctx.lineTo(p22.x, p22.y);
+//             ctx.closePath();
+//             ctx.stroke();
+//         }
+//     }
+
+//     p11 = p1.copy();
+//     p22 = p2.copy();
+//     for (i = 2; i <= this.width(); i = i + 6) {
+//         p11.x = p1.x + i;
+//         p22.x = p2.x + i;
+
+//         ctx.beginPath();
+//         ctx.moveTo(p11.x, p11.y);
+//         ctx.lineTo(p22.x, p22.y);
+//         ctx.closePath();
+//         ctx.stroke();
+//     }
+// };
+
+// // HandleMorph stepping:
+
+// HandleMorph.prototype.step = null;
+
+// HandleMorph.prototype.mouseDownLeft = function (pos) {
+//     var world = this.root(),
+//         offset;
+
+//     if (!this.target) {
+//         return null;
+//     }
+//     if (this.type.indexOf('move') === 0) {
+//         offset = pos.subtract(this.center());
+//     } else {
+//         offset = pos.subtract(this.bounds.origin);
+//     }
+
+//     this.step = () => {
+//         var newPos, newExt;
+//         if (world.hand.mouseButton) {
+//             newPos = world.hand.bounds.origin.copy().subtract(offset);
+//             if (this.type === 'resize') {
+//                 newExt = newPos.add(
+//                     this.extent().add(this.inset)
+//                 ).subtract(this.target.bounds.origin);
+//                 newExt = newExt.max(this.minExtent);
+//                 this.target.setExtent(newExt);
+
+//                 this.setPosition(
+//                     this.target.bottomRight().subtract(
+//                         this.extent().add(this.inset)
+//                     )
+//                 );
+//             } else if (this.type === 'moveCenter') {
+//                 this.target.setCenter(newPos);
+//             } else if (this.type === 'movePivot') {
+//                 this.target.setPivot(newPos);
+//                 this.setCenter(this.target.rotationCenter());
+//             } else { // type === 'move'
+//                 this.target.setPosition(
+//                     newPos.subtract(this.target.extent())
+//                         .add(this.extent())
+//                 );
+//             }
+//         } else {
+//             this.step = null;
+//         }
+//     };
+
+//     if (!this.target.step) {
+//         this.target.step = nop;
+//     }
+// };
+
+// // HandleMorph dragging and dropping:
+
+// HandleMorph.prototype.rootForGrab = function () {
+//     return this;
+// };
+
+// // HandleMorph events:
+
+// HandleMorph.prototype.mouseEnter = function () {
+//     this.isHighlighted = true;
+//     this.changed();
+// };
+
+// HandleMorph.prototype.mouseLeave = function () {
+//     this.isHighlighted = false;
+//     this.changed();
+// };
+
+// // HandleMorph menu:
+
+// HandleMorph.prototype.attach = function () {
+//     var choices = this.overlappedMorphs(),
+//         menu = new MenuMorph(this, 'choose target:');
+
+//     choices.forEach(each => {
+//         menu.addItem(each.toString().slice(0, 50), () => {
+//             this.isDraggable = false;
+//             this.target = each;
+//             this.fixLayout();
+//         });
+//     });
+//     if (choices.length > 0) {
+//         menu.popUpAtHand(this.world());
+//     }
+// };
+
+// // PenMorph ////////////////////////////////////////////////////////////
+
+// // I am a simple LOGO-wise turtle.
+
+// // PenMorph: referenced constructors
+
+// var PenMorph;
+
+// // PenMorph inherits from Morph:
+
+// PenMorph.prototype = new Morph();
+// PenMorph.prototype.constructor = PenMorph;
+// PenMorph.uber = Morph.prototype;
+
+// // PenMorph instance creation:
+
+// function PenMorph() {
+//     this.init();
+// }
+
+// PenMorph.prototype.init = function () {
+//     var size = MorphicPreferences.handleSize * 4;
+
+//     // additional properties:
+//     this.isWarped = false; // internal optimization
+//     this.heading = 0;
+//     this.isDown = true;
+//     this.size = 1;
+//     this.penPoint = 'tip'; // or 'center"
+//     this.penBounds = null; // rect around the visible arrow shape
+
+//     HandleMorph.uber.init.call(this);
+//     this.setExtent(new Point(size, size));
+// };
+
+// // PenMorph updating - optimized for warping, i.e atomic recursion
+
+// PenMorph.prototype.changed = function () {
+//     if (this.isWarped) {return; }
+//     PenMorph.uber.changed.call(this);
+
+// };
+
+// // PenMorph display:
+
+// PenMorph.prototype.render = function (ctx, facing) {
+//     // my orientation can be overridden with the "facing" parameter to
+//     // implement Scratch-style rotation styles
+
+//     var start, dest, left, right, len,
+//         direction = facing || this.heading;
+
+//     len = this.width() / 2;
+//     start = this.center().subtract(this.bounds.origin);
+
+//     if (this.penPoint === 'tip') {
+//         dest = start.distanceAngle(len * 0.75, direction - 180);
+//         left = start.distanceAngle(len, direction + 195);
+//         right = start.distanceAngle(len, direction - 195);
+//     } else { // 'middle'
+//         dest = start.distanceAngle(len * 0.75, direction);
+//         left = start.distanceAngle(len * 0.33, direction + 230);
+//         right = start.distanceAngle(len * 0.33, direction - 230);
+//     }
+
+//     // cache penBounds
+//     this.penBounds = new Rectangle(
+//         Math.min(start.x, dest.x, left.x, right.x),
+//         Math.min(start.y, dest.y, left.y, right.y),
+//         Math.max(start.x, dest.x, left.x, right.x),
+//         Math.max(start.y, dest.y, left.y, right.y)
+//     );
+
+//     // draw arrow shape
+//     ctx.fillStyle = this.color.toString();
+//     ctx.beginPath();
+
+//     ctx.moveTo(start.x, start.y);
+//     ctx.lineTo(left.x, left.y);
+//     ctx.lineTo(dest.x, dest.y);
+//     ctx.lineTo(right.x, right.y);
+
+//     ctx.closePath();
+//     ctx.strokeStyle = 'white';
+//     ctx.lineWidth = 3;
+//     ctx.stroke();
+//     ctx.strokeStyle = 'black';
+//     ctx.lineWidth = 1;
+//     ctx.stroke();
+//     ctx.fill();
+// };
+
+// // PenMorph access:
+
+// PenMorph.prototype.setHeading = function (degrees) {
+//     this.heading = ((+degrees % 360) + 360) % 360;
+//     this.fixLayout();
+//     this.rerender();
+// };
+
+// PenMorph.prototype.numericalSetters = function () {
+//     // for context menu demo purposes
+//     return [
+//         'setLeft',
+//         'setTop',
+//         'setWidth',
+//         'setHeight',
+//         'setAlphaScaled',
+//         'setHeading'
+//     ];
+// };
+
+// // PenMorph menu:
+
+// PenMorph.prototype.developersMenu = function () {
+//     var menu = PenMorph.uber.developersMenu.call(this);
+//     menu.addLine();
+//     menu.addItem(
+//         'set rotation',
+//         "setRotation",
+//         'interactively turn this morph\nusing a dial widget'
+//     );
+//     return menu;
+// };
+
+// PenMorph.prototype.setRotation = function () {
+//     var menu, dial,
+//     	name = this.name || this.constructor.name;
+//     if (name.length > 10) {
+//     	name = name.slice(0, 9) + '...';
+//     }
+//     menu = new MenuMorph(this, name);
+//     dial = new DialMorph(null, null, this.heading);
+//     dial.rootForGrab = () => dial;
+//     dial.target = this;
+//     dial.action = 'setHeading';
+//     menu.items.push(dial);
+//     menu.addLine();
+//     menu.addItem('(90) right', () => this.setHeading(90));
+//     menu.addItem('(-90) left', () => this.setHeading(-90));
+//     menu.addItem('(0) up', () => this.setHeading(0));
+//     menu.addItem('(180) down', () => this.setHeading(180));
+//     menu.isDraggable = true;
+//     menu.popUpAtHand(this.world());
+// };
+
+// // PenMorph drawing:
+
+// PenMorph.prototype.drawLine = function (start, dest) {
+//     var context = this.parent.penTrails().getContext('2d'),
+//         from = start.subtract(this.parent.bounds.origin),
+//         to = dest.subtract(this.parent.bounds.origin);
+//     if (this.isDown) {
+//         context.lineWidth = this.size;
+//         context.strokeStyle = this.color.toString();
+//         context.lineCap = 'round';
+//         context.lineJoin = 'round';
+//         context.beginPath();
+//         context.moveTo(from.x, from.y);
+//         context.lineTo(to.x, to.y);
+//         context.stroke();
+//         if (this.isWarped === false) {
+//             this.world().broken.push(
+//                 start.rectangle(dest).expandBy(
+//                     Math.max(this.size / 2, 1)
+//                 ).intersect(this.parent.visibleBounds()).spread()
+//             );
+//         }
+//     }
+// };
+
+// // PenMorph turtle ops:
+
+// PenMorph.prototype.turn = function (degrees) {
+//     this.setHeading(this.heading + parseFloat(degrees));
+// };
+
+// PenMorph.prototype.forward = function (steps) {
+//     var start = this.center(),
+//         dest,
+//         dist = parseFloat(steps);
+//     if (dist >= 0) {
+//         dest = this.position().distanceAngle(dist, this.heading);
+//     } else {
+//         dest = this.position().distanceAngle(
+//             Math.abs(dist),
+//             (this.heading - 180)
+//         );
+//     }
+//     this.setPosition(dest);
+//     this.drawLine(start, this.center());
+// };
+
+// PenMorph.prototype.down = function () {
+//     this.isDown = true;
+// };
+
+// PenMorph.prototype.up = function () {
+//     this.isDown = false;
+// };
+
+// PenMorph.prototype.clear = function () {
+//     this.parent.rerender();
+// };
+
+// // PenMorph optimization for atomic recursion:
+
+// PenMorph.prototype.startWarp = function () {
+//     this.isWarped = true;
+// };
+
+// PenMorph.prototype.endWarp = function () {
+//     this.isWarped = false;
+//     this.parent.changed();
+// };
+
+// PenMorph.prototype.warp = function (fun) {
+//     this.startWarp();
+//     fun.call(this);
+//     this.endWarp();
+// };
+
+// PenMorph.prototype.warpOp = function (selector, argsArray) {
+//     this.startWarp();
+//     this[selector].apply(this, argsArray);
+//     this.endWarp();
+// };
+
+// // PenMorph demo ops:
+// // try these with WARP eg.: this.warp(function () {tree(12, 120, 20)})
+
+// PenMorph.prototype.warpSierpinski = function (length, min) {
+//     this.warpOp('sierpinski', [length, min]);
+// };
+
+// PenMorph.prototype.sierpinski = function (length, min) {
+//     var i;
+//     if (length > min) {
+//         for (i = 0; i < 3; i += 1) {
+//             this.sierpinski(length * 0.5, min);
+//             this.turn(120);
+//             this.forward(length);
+//         }
+//     }
+// };
+
+// PenMorph.prototype.warpTree = function (level, length, angle) {
+//     this.warpOp('tree', [level, length, angle]);
+// };
+
+// PenMorph.prototype.tree = function (level, length, angle) {
+//     if (level > 0) {
+//         this.size = level;
+//         this.forward(length);
+//         this.turn(angle);
+//         this.tree(level - 1, length * 0.75, angle);
+//         this.turn(angle * -2);
+//         this.tree(level - 1, length * 0.75, angle);
+//         this.turn(angle);
+//         this.forward(-length);
+//     }
+// };
 
 // // ColorPaletteMorph ///////////////////////////////////////////////////
 
@@ -6378,305 +6378,305 @@ PenMorph.prototype.tree = function (level, length, angle) {
 //     return sha;
 // };
 
-// DialMorph //////////////////////////////////////////////////////
+// // DialMorph //////////////////////////////////////////////////////
 
-// I am a knob than can be turned to select a number
+// // I am a knob than can be turned to select a number
 
-var DialMorph;
+// var DialMorph;
 
-// DialMorph inherits from Morph:
+// // DialMorph inherits from Morph:
 
-DialMorph.prototype = new Morph();
-DialMorph.prototype.constructor = DialMorph;
-DialMorph.uber = Morph.prototype;
+// DialMorph.prototype = new Morph();
+// DialMorph.prototype.constructor = DialMorph;
+// DialMorph.uber = Morph.prototype;
 
-function DialMorph(min, max, value, tick, radius) {
-    this.init(min, max, value, tick, radius);
-}
+// function DialMorph(min, max, value, tick, radius) {
+//     this.init(min, max, value, tick, radius);
+// }
 
-DialMorph.prototype.init = function (min, max, value, tick, radius) {
-    this.target = null;
-    this.action = null;
-    this.min = min || 0;
-    this.max = max || 360;
-    this.value = Math.max(this.min, (value || 0) % this.max);
-    this.tick = tick || 15;
-    this.fillColor = null;
+// DialMorph.prototype.init = function (min, max, value, tick, radius) {
+//     this.target = null;
+//     this.action = null;
+//     this.min = min || 0;
+//     this.max = max || 360;
+//     this.value = Math.max(this.min, (value || 0) % this.max);
+//     this.tick = tick || 15;
+//     this.fillColor = null;
 
-    DialMorph.uber.init.call(this);
+//     DialMorph.uber.init.call(this);
 
-    this.color = new Color(230, 230, 230);
-    this.setRadius(radius || MorphicPreferences.menuFontSize * 4);
-};
+//     this.color = new Color(230, 230, 230);
+//     this.setRadius(radius || MorphicPreferences.menuFontSize * 4);
+// };
 
-DialMorph.prototype.setRadius = function (radius) {
-	this.radius = radius;
-    this.setExtent(new Point(this.radius * 2, this.radius * 2));
-};
+// DialMorph.prototype.setRadius = function (radius) {
+// 	this.radius = radius;
+//     this.setExtent(new Point(this.radius * 2, this.radius * 2));
+// };
 
-DialMorph.prototype.setValue = function (value, snapToTick, noUpdate) {
-	var range = this.max - this.min;
- 	value = value || 0;
-    this.value = this.min + (((+value % range) + range) % range);
-    if (snapToTick) {
-    	if (this.value < this.tick) {
-     		this.value = this.min;
-       	} else {
-    		this.value -= this.value % this.tick % this.value;
-        }
-    }
- 	this.changed();
-  	if (noUpdate) {return; }
-  	this.updateTarget();
-};
+// DialMorph.prototype.setValue = function (value, snapToTick, noUpdate) {
+// 	var range = this.max - this.min;
+//  	value = value || 0;
+//     this.value = this.min + (((+value % range) + range) % range);
+//     if (snapToTick) {
+//     	if (this.value < this.tick) {
+//      		this.value = this.min;
+//        	} else {
+//     		this.value -= this.value % this.tick % this.value;
+//         }
+//     }
+//  	this.changed();
+//   	if (noUpdate) {return; }
+//   	this.updateTarget();
+// };
 
-DialMorph.prototype.getValueOf = function (point) {
-    var range = this.max - this.min,
-    	center = this.center(),
-        deltaX = point.x - center.x,
-        deltaY = center.y - point.y,
-        angle = Math.abs(deltaX) < 0.001 ? (deltaY < 0 ? 90 : 270)
-                : Math.round(
-                (deltaX >= 0 ? 0 : 180)
-                    - (Math.atan(deltaY / deltaX) * 57.2957795131)
-        		),
-        value = angle + 90 % 360,
-        ratio = value / 360;
-    return range * ratio + this.min;
-};
+// DialMorph.prototype.getValueOf = function (point) {
+//     var range = this.max - this.min,
+//     	center = this.center(),
+//         deltaX = point.x - center.x,
+//         deltaY = center.y - point.y,
+//         angle = Math.abs(deltaX) < 0.001 ? (deltaY < 0 ? 90 : 270)
+//                 : Math.round(
+//                 (deltaX >= 0 ? 0 : 180)
+//                     - (Math.atan(deltaY / deltaX) * 57.2957795131)
+//         		),
+//         value = angle + 90 % 360,
+//         ratio = value / 360;
+//     return range * ratio + this.min;
+// };
 
-DialMorph.prototype.setExtent = function (aPoint) {
-	var size = Math.min(aPoint.x, aPoint.y);
-	this.radius = size / 2;
-    DialMorph.uber.setExtent.call(this, new Point(size, size));
-};
+// DialMorph.prototype.setExtent = function (aPoint) {
+// 	var size = Math.min(aPoint.x, aPoint.y);
+// 	this.radius = size / 2;
+//     DialMorph.uber.setExtent.call(this, new Point(size, size));
+// };
 
-DialMorph.prototype.render = function (ctx) {
-    var i, angle, x1, y1, x2, y2,
-        light = this.color.lighter().toString(),
-        range = this.max - this.min,
-        ticks = range / this.tick,
-        face = this.radius * 0.75,
-        inner = face * 0.85,
-        outer = face * 0.95;
+// DialMorph.prototype.render = function (ctx) {
+//     var i, angle, x1, y1, x2, y2,
+//         light = this.color.lighter().toString(),
+//         range = this.max - this.min,
+//         ticks = range / this.tick,
+//         face = this.radius * 0.75,
+//         inner = face * 0.85,
+//         outer = face * 0.95;
 
-    // draw a light border:
-    ctx.fillStyle = light;
-    ctx.beginPath();
-    ctx.arc(
-        this.radius,
-        this.radius,
-        face + Math.min(1, this.radius - face),
-        0,
-        2 * Math.PI,
-        false
-    );
-    ctx.closePath();
-    ctx.fill();
+//     // draw a light border:
+//     ctx.fillStyle = light;
+//     ctx.beginPath();
+//     ctx.arc(
+//         this.radius,
+//         this.radius,
+//         face + Math.min(1, this.radius - face),
+//         0,
+//         2 * Math.PI,
+//         false
+//     );
+//     ctx.closePath();
+//     ctx.fill();
 
-    // fill circle:
-    ctx.fillStyle = this.color.toString();
-    ctx.beginPath();
-    ctx.arc(
-        this.radius,
-        this.radius,
-        face,
-        0,
-        2 * Math.PI,
-        false
-    );
-    ctx.closePath();
-    ctx.fill();
+//     // fill circle:
+//     ctx.fillStyle = this.color.toString();
+//     ctx.beginPath();
+//     ctx.arc(
+//         this.radius,
+//         this.radius,
+//         face,
+//         0,
+//         2 * Math.PI,
+//         false
+//     );
+//     ctx.closePath();
+//     ctx.fill();
 
-    // fill value
-    angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
-    ctx.fillStyle = (this.fillColor || this.color.darker()).toString();
-    ctx.beginPath();
-    ctx.arc(
-        this.radius,
-        this.radius,
-        face,
-        Math.PI / -2,
-        angle,
-        false
-    );
-    ctx.lineTo(this.radius, this.radius);
-    ctx.closePath();
-    ctx.fill();
+//     // fill value
+//     angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+//     ctx.fillStyle = (this.fillColor || this.color.darker()).toString();
+//     ctx.beginPath();
+//     ctx.arc(
+//         this.radius,
+//         this.radius,
+//         face,
+//         Math.PI / -2,
+//         angle,
+//         false
+//     );
+//     ctx.lineTo(this.radius, this.radius);
+//     ctx.closePath();
+//     ctx.fill();
 
-    // draw ticks:
-    ctx.strokeStyle = new Color(35, 35, 35).toString();
-    ctx.lineWidth = 1;
-    for (i = 0; i < ticks; i += 1) {
-        angle = (i - 3) * (Math.PI * 2) / ticks - Math.PI / 2;
-        ctx.beginPath();
-        x1 = this.radius + Math.cos(angle) * inner;
-        y1 = this.radius + Math.sin(angle) * inner;
-        x2 = this.radius + Math.cos(angle) * outer;
-        y2 = this.radius + Math.sin(angle) * outer;
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-    }
+//     // draw ticks:
+//     ctx.strokeStyle = new Color(35, 35, 35).toString();
+//     ctx.lineWidth = 1;
+//     for (i = 0; i < ticks; i += 1) {
+//         angle = (i - 3) * (Math.PI * 2) / ticks - Math.PI / 2;
+//         ctx.beginPath();
+//         x1 = this.radius + Math.cos(angle) * inner;
+//         y1 = this.radius + Math.sin(angle) * inner;
+//         x2 = this.radius + Math.cos(angle) * outer;
+//         y2 = this.radius + Math.sin(angle) * outer;
+//         ctx.moveTo(x1, y1);
+//         ctx.lineTo(x2, y2);
+//         ctx.stroke();
+//     }
 
-    // draw a filled center:
-    inner = face * 0.05;
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    ctx.arc(
-        this.radius,
-        this.radius,
-        inner,
-        0,
-        2 * Math.PI,
-        false
-    );
-    ctx.closePath();
-    ctx.fill();
+//     // draw a filled center:
+//     inner = face * 0.05;
+//     ctx.fillStyle = 'black';
+//     ctx.beginPath();
+//     ctx.arc(
+//         this.radius,
+//         this.radius,
+//         inner,
+//         0,
+//         2 * Math.PI,
+//         false
+//     );
+//     ctx.closePath();
+//     ctx.fill();
 
-    // draw the inner hand:
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 1;
-    angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
-    outer = face * 0.8;
-    x1 = this.radius + Math.cos(angle) * inner;
-    y1 = this.radius + Math.sin(angle) * inner;
-    x2 = this.radius + Math.cos(angle) * outer;
-    y2 = this.radius + Math.sin(angle) * outer;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
+//     // draw the inner hand:
+//     ctx.strokeStyle = 'black';
+//     ctx.lineWidth = 1;
+//     angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+//     outer = face * 0.8;
+//     x1 = this.radius + Math.cos(angle) * inner;
+//     y1 = this.radius + Math.sin(angle) * inner;
+//     x2 = this.radius + Math.cos(angle) * outer;
+//     y2 = this.radius + Math.sin(angle) * outer;
+//     ctx.beginPath();
+//     ctx.moveTo(x1, y1);
+//     ctx.lineTo(x2, y2);
+//     ctx.stroke();
 
-    // draw a read-out circle:
-    inner = inner * 2;
-    x2 = this.radius + Math.cos(angle) * (outer + inner);
-    y2 = this.radius + Math.sin(angle) * (outer + inner);
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    ctx.arc(
-        x2,
-        y2,
-        inner,
-        0,
-        2 * Math.PI,
-        false
-    );
-    ctx.closePath();
-    ctx.stroke();
+//     // draw a read-out circle:
+//     inner = inner * 2;
+//     x2 = this.radius + Math.cos(angle) * (outer + inner);
+//     y2 = this.radius + Math.sin(angle) * (outer + inner);
+//     ctx.fillStyle = 'black';
+//     ctx.beginPath();
+//     ctx.arc(
+//         x2,
+//         y2,
+//         inner,
+//         0,
+//         2 * Math.PI,
+//         false
+//     );
+//     ctx.closePath();
+//     ctx.stroke();
 
-    // draw the outer hand:
-    angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
-    x1 = this.radius + Math.cos(angle) * face;
-    y1 = this.radius + Math.sin(angle) * face;
-    x2 = this.radius + Math.cos(angle) * (this.radius - 1);
-    y2 = this.radius + Math.sin(angle) * (this.radius - 1);
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = light;
-    ctx.stroke();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
+//     // draw the outer hand:
+//     angle = (this.value - this.min) * (Math.PI * 2) / range - Math.PI / 2;
+//     x1 = this.radius + Math.cos(angle) * face;
+//     y1 = this.radius + Math.sin(angle) * face;
+//     x2 = this.radius + Math.cos(angle) * (this.radius - 1);
+//     y2 = this.radius + Math.sin(angle) * (this.radius - 1);
+//     ctx.beginPath();
+//     ctx.moveTo(x1, y1);
+//     ctx.lineTo(x2, y2);
+//     ctx.lineWidth = 3;
+//     ctx.strokeStyle = light;
+//     ctx.stroke();
+//     ctx.lineWidth = 1;
+//     ctx.strokeStyle = 'black';
+//     ctx.stroke();
 
-    // draw arrow tip:
-    angle = radians(degrees(angle) - 4);
-    x1 = this.radius + Math.cos(angle) * this.radius * 0.9;
-    y1 = this.radius + Math.sin(angle) * this.radius * 0.9;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    angle = radians(degrees(angle) + 8);
-    x1 = this.radius + Math.cos(angle) * this.radius * 0.9;
-    y1 = this.radius + Math.sin(angle) * this.radius * 0.9;
-    ctx.lineTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.closePath();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = light;
-    ctx.stroke();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = 'black';
-    ctx.stroke();
-    ctx.fill();
-};
+//     // draw arrow tip:
+//     angle = radians(degrees(angle) - 4);
+//     x1 = this.radius + Math.cos(angle) * this.radius * 0.9;
+//     y1 = this.radius + Math.sin(angle) * this.radius * 0.9;
+//     ctx.beginPath();
+//     ctx.moveTo(x1, y1);
+//     angle = radians(degrees(angle) + 8);
+//     x1 = this.radius + Math.cos(angle) * this.radius * 0.9;
+//     y1 = this.radius + Math.sin(angle) * this.radius * 0.9;
+//     ctx.lineTo(x1, y1);
+//     ctx.lineTo(x2, y2);
+//     ctx.closePath();
+//     ctx.lineWidth = 3;
+//     ctx.strokeStyle = light;
+//     ctx.stroke();
+//     ctx.lineWidth = 1;
+//     ctx.strokeStyle = 'black';
+//     ctx.stroke();
+//     ctx.fill();
+// };
 
-// DialMorph stepping:
+// // DialMorph stepping:
 
-DialMorph.prototype.step = null;
+// DialMorph.prototype.step = null;
 
-DialMorph.prototype.mouseDownLeft = function (pos) {
-    var world = this.root();
+// DialMorph.prototype.mouseDownLeft = function (pos) {
+//     var world = this.root();
 
-    this.step = () => {
-        if (world.hand.mouseButton) {
-            this.setValue(
-            	this.getValueOf(world.hand.bounds.origin),
-             	world.currentKey !== 16 // snap to tick
-            );
-        } else {
-            this.step = null;
-        }
-    };
-};
+//     this.step = () => {
+//         if (world.hand.mouseButton) {
+//             this.setValue(
+//             	this.getValueOf(world.hand.bounds.origin),
+//              	world.currentKey !== 16 // snap to tick
+//             );
+//         } else {
+//             this.step = null;
+//         }
+//     };
+// };
 
-// DialMorph menu:
+// // DialMorph menu:
 
-DialMorph.prototype.developersMenu = function () {
-    var menu = DialMorph.uber.developersMenu.call(this);
-    menu.addLine();
-    menu.addItem(
-        'set target',
-        "setTarget",
-        'select another morph\nwhose numerical property\nwill be ' +
-            'controlled by this one'
-    );
-    return menu;
-};
+// DialMorph.prototype.developersMenu = function () {
+//     var menu = DialMorph.uber.developersMenu.call(this);
+//     menu.addLine();
+//     menu.addItem(
+//         'set target',
+//         "setTarget",
+//         'select another morph\nwhose numerical property\nwill be ' +
+//             'controlled by this one'
+//     );
+//     return menu;
+// };
 
-DialMorph.prototype.setTarget = function () {
-    var choices = this.overlappedMorphs(),
-        menu = new MenuMorph(this, 'choose target:');
+// DialMorph.prototype.setTarget = function () {
+//     var choices = this.overlappedMorphs(),
+//         menu = new MenuMorph(this, 'choose target:');
 
-    choices.push(this.world());
-    choices.forEach(each => {
-        menu.addItem(each.toString().slice(0, 50), () => {
-            this.target = each;
-            this.setTargetSetter();
-        });
-    });
-    if (choices.length === 1) {
-        this.target = choices[0];
-        this.setTargetSetter();
-    } else if (choices.length > 0) {
-        menu.popUpAtHand(this.world());
-    }
-};
+//     choices.push(this.world());
+//     choices.forEach(each => {
+//         menu.addItem(each.toString().slice(0, 50), () => {
+//             this.target = each;
+//             this.setTargetSetter();
+//         });
+//     });
+//     if (choices.length === 1) {
+//         this.target = choices[0];
+//         this.setTargetSetter();
+//     } else if (choices.length > 0) {
+//         menu.popUpAtHand(this.world());
+//     }
+// };
 
-DialMorph.prototype.setTargetSetter = function () {
-    var choices = this.target.numericalSetters(),
-        menu = new MenuMorph(this, 'choose target property:');
+// DialMorph.prototype.setTargetSetter = function () {
+//     var choices = this.target.numericalSetters(),
+//         menu = new MenuMorph(this, 'choose target property:');
 
-    choices.forEach(each => {
-        menu.addItem(each, () => this.action = each);
-    });
-    if (choices.length === 1) {
-        this.action = choices[0];
-    } else if (choices.length > 0) {
-        menu.popUpAtHand(this.world());
-    }
-};
+//     choices.forEach(each => {
+//         menu.addItem(each, () => this.action = each);
+//     });
+//     if (choices.length === 1) {
+//         this.action = choices[0];
+//     } else if (choices.length > 0) {
+//         menu.popUpAtHand(this.world());
+//     }
+// };
 
-DialMorph.prototype.updateTarget = function () {
-    if (this.action) {
-        if (typeof this.action === 'function') {
-            this.action.call(this.target, this.value);
-        } else { // assume it's a String
-            this.target[this.action](this.value);
-        }
-    }
-};
+// DialMorph.prototype.updateTarget = function () {
+//     if (this.action) {
+//         if (typeof this.action === 'function') {
+//             this.action.call(this.target, this.value);
+//         } else { // assume it's a String
+//             this.target[this.action](this.value);
+//         }
+//     }
+// };
 
 // // CircleBoxMorph //////////////////////////////////////////////////////
 
