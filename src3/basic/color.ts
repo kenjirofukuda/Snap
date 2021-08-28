@@ -7,7 +7,7 @@ class Color {
     g: number;
     b: number;
     a: number;
-    constructor(r = 0, g = 0, b = 0, a = 0) {
+    constructor(r = 0, g = 0, b = 0, a = 1) {
         // all values are optional, just (r, g, b) is fine
         this.r = r || 0;
         this.g = g || 0;
