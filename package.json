@@ -4,7 +4,9 @@
   "description": "![Snap! Logo](src/snap_logo_sm.png) # Snap<em>!</em> Build Your Own Blocks",
   "main": "sw.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc",
+    "postcompile": "sh ./posttsc.sh"
   },
   "repository": {
     "type": "git",

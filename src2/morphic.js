@@ -1314,47 +1314,47 @@ Object.freeze(ZERO);
 Object.freeze(BLACK);
 Object.freeze(WHITE);
 
-var standardSettings = {
-    minimumFontHeight: getMinimumFontHeight(), // browser settings
-    globalFontFamily: '',
-    menuFontName: 'sans-serif',
-    menuFontSize: 12,
-    bubbleHelpFontSize: 10,
-    prompterFontName: 'sans-serif',
-    prompterFontSize: 12,
-    prompterSliderSize: 10,
-    handleSize: 15,
-    scrollBarSize: 9, // was 12,
-    mouseScrollAmount: 40,
-    useSliderForInput: false,
-    isTouchDevice: false, // turned on by touch events, don't set
-    rasterizeSVGs: false,
-    isFlat: false,
-    grabThreshold: 5,
-    showHoles: false
-};
+// var standardSettings = {
+//     minimumFontHeight: getMinimumFontHeight(), // browser settings
+//     globalFontFamily: '',
+//     menuFontName: 'sans-serif',
+//     menuFontSize: 12,
+//     bubbleHelpFontSize: 10,
+//     prompterFontName: 'sans-serif',
+//     prompterFontSize: 12,
+//     prompterSliderSize: 10,
+//     handleSize: 15,
+//     scrollBarSize: 9, // was 12,
+//     mouseScrollAmount: 40,
+//     useSliderForInput: false,
+//     isTouchDevice: false, // turned on by touch events, don't set
+//     rasterizeSVGs: false,
+//     isFlat: false,
+//     grabThreshold: 5,
+//     showHoles: false
+// };
 
-var touchScreenSettings = {
-    minimumFontHeight: standardSettings.minimumFontHeight,
-    globalFontFamily: '',
-    menuFontName: 'sans-serif',
-    menuFontSize: 24,
-    bubbleHelpFontSize: 18,
-    prompterFontName: 'sans-serif',
-    prompterFontSize: 24,
-    prompterSliderSize: 20,
-    handleSize: 26,
-    scrollBarSize: 24,
-    mouseScrollAmount: 40,
-    useSliderForInput: false,
-    isTouchDevice: true,
-    rasterizeSVGs: false,
-    isFlat: false,
-    grabThreshold: 5,
-    showHoles: false
-};
+// var touchScreenSettings = {
+//     minimumFontHeight: standardSettings.minimumFontHeight,
+//     globalFontFamily: '',
+//     menuFontName: 'sans-serif',
+//     menuFontSize: 24,
+//     bubbleHelpFontSize: 18,
+//     prompterFontName: 'sans-serif',
+//     prompterFontSize: 24,
+//     prompterSliderSize: 20,
+//     handleSize: 26,
+//     scrollBarSize: 24,
+//     mouseScrollAmount: 40,
+//     useSliderForInput: false,
+//     isTouchDevice: true,
+//     rasterizeSVGs: false,
+//     isFlat: false,
+//     grabThreshold: 5,
+//     showHoles: false
+// };
 
-var MorphicPreferences = standardSettings;
+// var MorphicPreferences = standardSettings;
 
 // first, try enabling support for retina displays - can be turned off later
 
