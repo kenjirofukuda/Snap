@@ -1,10 +1,7 @@
 // Global Functions ////////////////////////////////////////////////////
 
 import { Point } from "./point";
-
-interface HTMLCanvasElement2 extends HTMLCanvasElement {
-    isRetinaEnabled?: boolean;    
-}
+import { HTMLCanvasElementEx } from "./retinatypes";
 
 type MorphicSettings = {
     minimumFontHeight: number; // browser settings
@@ -131,8 +128,8 @@ export function isURL(text: string): boolean {
 export function newCanvas(
     extentPoint: Point,
     nonRetina = false,
-    recycleMe?: HTMLCanvasElement2
-): HTMLCanvasElement2 {
+    recycleMe?: HTMLCanvasElementEx
+): HTMLCanvasElementEx {
     // answer a new empty instance of Canvas, don't display anywhere
     // nonRetina - optional Boolean "false"
     // by default retina support is automatic
@@ -143,7 +140,7 @@ export function newCanvas(
         extentPoint ||
         (recycleMe ? new Point(recycleMe.width, recycleMe.height) : new Point(0, 0))
     ).ceil();
-    var canvas: HTMLCanvasElement2;
+    var canvas: HTMLCanvasElementEx;
     if (
         recycleMe &&
         !recycleMe.dataset.morphicShare &&
@@ -169,8 +166,8 @@ export function newCanvas(
 }
 
 export function copyCanvas(
-    aCanvas: HTMLCanvasElement2
-): HTMLCanvasElement2 | undefined {
+    aCanvas: HTMLCanvasElementEx
+): HTMLCanvasElementEx | undefined {
     // answer a deep copy of a canvas element respecting its retina status
     if (aCanvas && aCanvas.width && aCanvas.height) {
         const canvas = newCanvas(
