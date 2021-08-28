@@ -1295,7 +1295,7 @@ var morphicVersion = '2021-July-09';
 var modules = {}; // keep track of additional loaded modules
 var useBlurredShadows = true;
 
-const ZERO = new Point();
+// const ZERO = new Point();
 
 /**
  * @constant

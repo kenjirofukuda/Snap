@@ -1,0 +1,329 @@
+import { Point, PointLike } from './point'
+
+export class Rectangle {
+    origin: Point;
+    corner: Point;
+    constructor(left = 0, top = 0, right = 0, bottom = 0) {
+        this.origin = new Point(left, top);
+        this.corner = new Point(right, bottom);
+    }
+    // init(originPoint: Point, cornerPoint: Point) {
+    //     this.origin = originPoint;
+    //     this.corner = cornerPoint;
+    // }
+    // Rectangle string representation: e.g. '[0@0 | 160@80]'
+    toString(): string {
+        return `[${this.origin} | ${this.corner}]`
+    }
+    // Rectangle copying:
+    copy(): Rectangle {
+        return new Rectangle(
+            this.left(),
+            this.top(),
+            this.right(),
+            this.bottom()
+        );
+    }
+    // Rectangle accessing - setting:
+    setTo(left = 0, top = 0, right = 0, bottom = 0): void {
+        // note: all inputs are optional and can be omitted
+        this.origin = new Point(
+            left || ((left === 0) ? 0 : this.left()),
+            top || ((top === 0) ? 0 : this.top())
+        );
+
+        this.corner = new Point(
+            right || ((right === 0) ? 0 : this.right()),
+            bottom || ((bottom === 0) ? 0 : this.bottom())
+        );
+    }
+    // Rectangle mutating
+    setExtent(aPoint: PointLike): void {
+        this.setWidth(aPoint.x);
+        this.setHeight(aPoint.y);
+    }
+    setWidth(width: number): void {
+        this.corner.x = this.origin.x + width;
+    }
+    setHeight(height: number): void {
+        this.corner.y = this.origin.y + height;
+    }
+    // Rectangle accessing - getting:
+    area(): number {
+        //requires width() and height() to be defined
+        var w = this.width();
+        if (w < 0) {
+            return 0;
+        }
+        return Math.max(w * this.height(), 0);
+    }
+    bottom(): number {
+        return this.corner.y;
+    }
+    bottomCenter(): Point {
+        return new Point(this.center().x, this.bottom());
+    }
+    bottomLeft(): Point {
+        return new Point(this.origin.x, this.corner.y);
+    }
+    bottomRight(): Point {
+        return this.corner.copy();
+    }
+    boundingBox(): Rectangle {
+        return this;
+    }
+    center(): Point {
+        return this.origin.add(
+            this.corner.subtract(this.origin).floorDivideBy(2)
+        );
+    }
+    corners(): Point[] {
+        return [this.origin,
+        this.bottomLeft(),
+        this.corner,
+        this.topRight()];
+    }
+    extent(): Point {
+        return this.corner.subtract(this.origin);
+    }
+    height(): number {
+        return this.corner.y - this.origin.y;
+    }
+    left(): number {
+        return this.origin.x;
+    }
+    leftCenter(): Point {
+        return new Point(this.left(), this.center().y);
+    }
+    right(): number {
+        return this.corner.x;
+    }
+    rightCenter(): Point {
+        return new Point(this.right(), this.center().y);
+    }
+    top(): number {
+        return this.origin.y;
+    }
+    topCenter(): Point {
+        return new Point(this.center().x, this.top());
+    }
+    topLeft(): Point {
+        return this.origin;
+    }
+    topRight(): Point {
+        return new Point(this.corner.x, this.origin.y);
+    }
+    width(): number {
+        return this.corner.x - this.origin.x;
+    }
+    position(): Point {
+        return this.origin;
+    }
+    // Rectangle comparison:
+    eq(aRect: Rectangle): boolean {
+        return this.origin.eq(aRect.origin) &&
+            this.corner.eq(aRect.corner);
+    }
+    abs(): Rectangle {
+        var newOrigin, newCorner;
+
+        newOrigin = this.origin.abs();
+        newCorner = this.corner.max(newOrigin);
+        return newOrigin.corner(newCorner);
+    }
+    // Rectangle functions:
+    insetBy(delta: Point | number): Rectangle {
+        // delta can be either a Point or a Number
+        var result = new Rectangle();
+        result.origin = this.origin.add(delta);
+        result.corner = this.corner.subtract(delta);
+        return result;
+    }
+    expandBy(delta: Point | number): Rectangle {
+        // delta can be either a Point or a Number
+        var result = new Rectangle();
+        result.origin = this.origin.subtract(delta);
+        result.corner = this.corner.add(delta);
+        return result;
+    }
+    growBy(delta: Point | number): Rectangle {
+        // delta can be either a Point or a Number
+        var result = new Rectangle();
+        result.origin = this.origin.copy();
+        result.corner = this.corner.add(delta);
+        return result;
+    }
+    intersect(aRect: Rectangle): Rectangle {
+        var result = new Rectangle();
+        result.origin = this.origin.max(aRect.origin);
+        result.corner = this.corner.min(aRect.corner);
+        return result;
+    }
+    merge(aRect: Rectangle): Rectangle {
+        var result = new Rectangle();
+        result.origin = this.origin.min(aRect.origin);
+        result.corner = this.corner.max(aRect.corner);
+        return result;
+    }
+    mergeWith(aRect: Rectangle): void {
+        // mutates myself
+        this.origin = this.origin.min(aRect.origin);
+        this.corner = this.corner.max(aRect.corner);
+    }
+    round(): Rectangle {
+        return this.origin.round().corner(this.corner.round());
+    }
+    spread(): Rectangle {
+        // round me by applying floor() to my origin and ceil() to my corner
+        // avoids artefacts on retina displays
+        return this.origin.floor().corner(this.corner.ceil());
+    }
+    amountToTranslateWithin(aRect: Rectangle): Point {
+        /*
+            Answer a Point, delta, such that self + delta is forced within
+            aRectangle. when all of me cannot be made to fit, prefer to keep
+            my topLeft inside. Taken from Squeak.
+        */
+        var dx = 0, dy = 0;
+
+        if (this.right() > aRect.right()) {
+            dx = aRect.right() - this.right();
+        }
+        if (this.bottom() > aRect.bottom()) {
+            dy = aRect.bottom() - this.bottom();
+        }
+        if ((this.left() + dx) < aRect.left()) {
+            dx = aRect.left() - this.left();
+        }
+        if ((this.top() + dy) < aRect.top()) {
+            dy = aRect.top() - this.top();
+        }
+        return new Point(dx, dy);
+    }
+    regionsAround(aRect: Rectangle): Rectangle[] {
+        // answer a list of rectangles surrounding another one,
+        // use this to clip "holes"
+        const regions: Rectangle[] = [];
+        if (!this.intersects(aRect)) {
+            return regions;
+        }
+        // left
+        if (aRect.left() > this.left()) {
+            regions.push(
+                new Rectangle(
+                    this.left(),
+                    this.top(),
+                    aRect.left(),
+                    this.bottom()
+                )
+            );
+        }
+        // above:
+        if (aRect.top() > this.top()) {
+            regions.push(
+                new Rectangle(
+                    this.left(),
+                    this.top(),
+                    this.right(),
+                    aRect.top()
+                )
+            );
+        }
+        // right:
+        if (aRect.right() < this.right()) {
+            regions.push(
+                new Rectangle(
+                    aRect.right(),
+                    this.top(),
+                    this.right(),
+                    this.bottom()
+                )
+            );
+        }
+        // below:
+        if (aRect.bottom() < this.bottom()) {
+            regions.push(
+                new Rectangle(
+                    this.left(),
+                    aRect.bottom(),
+                    this.right(),
+                    this.bottom()
+                )
+            );
+        }
+        return regions;
+    }
+    // Rectangle testing:
+    containsPoint(aPoint: Point): boolean {
+        return this.origin.le(aPoint) && aPoint.lt(this.corner);
+    }
+    containsRectangle(aRect: Rectangle): boolean {
+        return aRect.origin.gt(this.origin) &&
+            aRect.corner.lt(this.corner);
+    }
+    intersects(aRect: Rectangle): boolean {
+        var ro = aRect.origin, rc = aRect.corner;
+        return (rc.x >= this.origin.x) &&
+            (rc.y >= this.origin.y) &&
+            (ro.x <= this.corner.x) &&
+            (ro.y <= this.corner.y);
+    }
+    isNearTo(aRect: Rectangle, threshold: number): boolean {
+        var ro = aRect.origin, rc = aRect.corner, border = threshold || 0;
+        return (rc.x + border >= this.origin.x) &&
+            (rc.y + border >= this.origin.y) &&
+            (ro.x - border <= this.corner.x) &&
+            (ro.y - border <= this.corner.y);
+    }
+    // Rectangle transforming:
+    scaleBy(scale: Point | number): Rectangle {
+        // scale can be either a Point or a scalar
+        var o = this.origin.multiplyBy(scale), c = this.corner.multiplyBy(scale);
+        return new Rectangle(o.x, o.y, c.x, c.y);
+    }
+    translateBy(delta: Point | number): Rectangle {
+        // delta can be either a Point or a number
+        var o = this.origin.add(delta), c = this.corner.add(delta);
+        return new Rectangle(o.x, o.y, c.x, c.y);
+    }
+    // Rectangle converting:
+    asArray(): number[] {
+        return [this.left(), this.top(), this.right(), this.bottom()];
+    }
+    asArray_xywh(): number[] {
+        return [this.left(), this.top(), this.width(), this.height()];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
