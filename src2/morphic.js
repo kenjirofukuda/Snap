@@ -1297,22 +1297,22 @@ var useBlurredShadows = true;
 
 // const ZERO = new Point();
 
-/**
- * @constant
- * @type {Color}
- */
-const BLACK = new Color();
+// /**
+//  * @constant
+//  * @type {Color}
+//  */
+// const BLACK = new Color();
 
-/**
- * @constant
- * @type {Color}
- */
-const WHITE = new Color(255, 255, 255);
-const CLEAR = new Color(0, 0, 0, 0);
+// /**
+//  * @constant
+//  * @type {Color}
+//  */
+// const WHITE = new Color(255, 255, 255);
+// const CLEAR = new Color(0, 0, 0, 0);
 
-Object.freeze(ZERO);
-Object.freeze(BLACK);
-Object.freeze(WHITE);
+// Object.freeze(ZERO);
+// Object.freeze(BLACK);
+// Object.freeze(WHITE);
 
 // var standardSettings = {
 //     minimumFontHeight: getMinimumFontHeight(), // browser settings

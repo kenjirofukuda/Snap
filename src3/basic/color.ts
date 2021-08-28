@@ -3,7 +3,11 @@
 // Color instance creation:
 
 class Color {
-    constructor(r, g, b, a) {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+    constructor(r = 0, g = 0, b = 0, a = 0) {
         // all values are optional, just (r, g, b) is fine
         this.r = r || 0;
         this.g = g || 0;
@@ -11,21 +15,21 @@ class Color {
         this.a = a || ((a === 0) ? 0 : 1);
     }
     // Color string representation: e.g. 'rgba(255,165,0,1)'
-    toString() {
+    toString(): string {
         return 'rgba(' +
             Math.round(this.r) + ',' +
             Math.round(this.g) + ',' +
             Math.round(this.b) + ',' +
             this.a + ')';
     }
-    toRGBstring() {
+    toRGBstring(): string {
         return 'rgb(' +
             Math.round(this.r) + ',' +
             Math.round(this.g) + ',' +
             Math.round(this.b) + ')';
     }
     // Color copying:
-    copy() {
+    copy(): Color {
         return new Color(
             this.r,
             this.g,
@@ -34,7 +38,7 @@ class Color {
         );
     }
     // Color comparison:
-    eq(aColor, observeAlpha) {
+    eq(aColor: Color, observeAlpha = false): boolean {
         // ==
         return aColor &&
             this.r === aColor.r &&
@@ -42,13 +46,13 @@ class Color {
             this.b === aColor.b &&
             (observeAlpha ? this.a === aColor.a : true);
     }
-    isCloseTo(aColor, observeAlpha, tolerance) {
+    isCloseTo(aColor: Color, observeAlpha = false, tolerance = 10): boolean {
         // experimental - answer whether a color is "close" to another one by
         // a given percentage. tolerance is the percentage by which each color
         // channel may diverge, alpha needs to be the exact same unless ignored
         var thres = 2.55 * (tolerance || 10);
 
-        function dist(a, b) {
+        function dist(a: number, b: number) {
             var diff = a - b;
             return diff < 0 ? 255 + diff : diff;
         }
@@ -60,7 +64,7 @@ class Color {
             (observeAlpha ? this.a === aColor.a : true);
     }
     // Color conversion (hsv):
-    hsv() {
+    hsv(): [number, number, number] {
         // ignore alpha
         var max, min, h, s, v, d, rr = this.r / 255, gg = this.g / 255, bb = this.b / 255;
         max = Math.max(rr, gg, bb);
@@ -88,7 +92,7 @@ class Color {
         }
         return [h, s, v];
     }
-    set_hsv(h, s, v) {
+    set_hsv(h: number, s: number, v: number): void {
         // ignore alpha, h, s and v are to be within [0, 1]
         var i, f, p, q, t;
         i = Math.floor(h * 6);
@@ -135,14 +139,21 @@ class Color {
 
     }
     // Color conversion (hsl):
-    hsl() {
+    hsl(): [number, number, number] {
         // ignore alpha
-        var rr = this.r / 255, gg = this.g / 255, bb = this.b / 255, max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb), h, s, l = (max + min) / 2, d;
+        const rr = this.r / 255;
+        const gg = this.g / 255;
+        const bb = this.b / 255;
+        const max = Math.max(rr, gg, bb);
+        const min = Math.min(rr, gg, bb);
+        let h = 0;
+        let s = 0;
+        const l = (max + min) / 2;
         if (max === min) { // achromatic
             h = 0;
             s = 0;
         } else {
-            d = max - min;
+            const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
                 case rr:
@@ -159,11 +170,11 @@ class Color {
         }
         return [h, s, l];
     }
-    set_hsl(h, s, l) {
+    set_hsl(h: number, s: number, l: number): void {
         // ignore alpha, h, s and l are to be within [0, 1]
         var q, p;
 
-        function hue2rgb(p, q, t) {
+        function hue2rgb(p: number, q: number, t: number) {
             if (t < 0) {
                 t += 1;
             }
@@ -199,7 +210,7 @@ class Color {
         this.b *= 255;
     }
     // Color mixing:
-    mixed(proportion, otherColor) {
+    mixed(proportion: number, otherColor: Color): Color {
         // answer a copy of this color mixed with another color, ignore alpha
         var frac1 = Math.min(Math.max(proportion, 0), 1), frac2 = 1 - frac1;
         return new Color(
@@ -208,7 +219,7 @@ class Color {
             this.b * frac1 + otherColor.b * frac2
         );
     }
-    darker(percent) {
+    darker(percent: number): Color {
         // return an rgb-interpolated darker copy of me, ignore alpha
         var fract = 0.8333;
         if (percent) {
@@ -216,7 +227,7 @@ class Color {
         }
         return this.mixed(fract, new Color(0, 0, 0));
     }
-    lighter(percent) {
+    lighter(percent: number): Color {
         // return an rgb-interpolated lighter copy of me, ignore alpha
         var fract = 0.8333;
         if (percent) {
@@ -224,66 +235,58 @@ class Color {
         }
         return this.mixed(fract, WHITE);
     }
-    dansDarker() {
+    dansDarker(): Color {
         // return an hsv-interpolated darker copy of me, ignore alpha
         var hsv = this.hsv(), result = new Color(), vv = Math.max(hsv[2] - 0.16, 0);
         result.set_hsv(hsv[0], hsv[1], vv);
         return result;
     }
-    inverted() {
+    inverted(): Color {
         return new Color(
             255 - this.r,
             255 - this.g,
             255 - this.b
         );
     }
-    solid() {
+    solid(): Color {
         return new Color(
             this.r,
             this.g,
             this.b
         );
     }
-    static fromString(aString) {
+    static fromString(aString: string): Color {
         // I parse rgb/rgba strings into a Color object
-        var components = aString.split(/[\(),]/).slice(1, 5);
-        return new Color(components[0], components[1], components[2], components[3]);
+        const components = aString.split(/[\(),]/).slice(1, 5);
+        if (components) {
+            return new Color(
+                parseInt(components[0], 10), 
+                parseInt(components[1], 10), 
+                parseInt(components[2], 10), 
+                parseInt(components[3], 10)); 
+        }
+        return CLEAR; // oops
     }
 }
 
+/**
+ * @constant
+ * @type {Color}
+ */
+export const BLACK = new Color();
 
 /**
  * @constant
  * @type {Color}
  */
-const BLACK = new Color();
+export const WHITE = new Color(255, 255, 255);
 
 /**
  * @constant
  * @type {Color}
  */
-const WHITE = new Color(255, 255, 255);
-
-/**
- * @constant
- * @type {Color}
- */
-const CLEAR = new Color(0, 0, 0, 0);
+export const CLEAR = new Color(0, 0, 0, 0);
 
 Object.freeze(BLACK);
 Object.freeze(WHITE);
 Object.freeze(CLEAR);
-
-
-
-
-
-
-
-
-
-
-
-
-
-

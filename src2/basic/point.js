@@ -238,7 +238,7 @@ class Point {
 
 
 const ZERO = new Point();
-
+Object.freeze(ZERO);
 
 
 
