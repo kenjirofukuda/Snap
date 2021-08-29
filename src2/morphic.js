@@ -73,7 +73,7 @@
     indentation indicating inheritance. Refer to this list to get a
     contextual overview:
 
-    Animation
+    MorphicAnimation
     Color
     Node
         Morph
@@ -117,7 +117,7 @@
     Global settings
     Global functions
 
-    Animation
+    MorphicAnimation
     Color
     Point
     Rectangle
@@ -1980,9 +1980,9 @@ enableRetinaSupport();
 //     are implemented.
 // */
 
-// // Animation instance creation:
+// // MorphicAnimation instance creation:
 
-// function Animation(setter, getter, delta, duration, easing, onComplete) {
+// function MorphicAnimation(setter, getter, delta, duration, easing, onComplete) {
 //     this.setter = setter; // function
 //     this.getter = getter; // function
 //     this.delta = delta || 0; // number
@@ -1997,7 +1997,7 @@ enableRetinaSupport();
 //     this.start();
 // }
 
-// Animation.prototype.easings = {
+// MorphicAnimation.prototype.easings = {
 //     // dictionary of a few pre-defined easing functions used to transition
 //     // two states
 
@@ -2028,7 +2028,7 @@ enableRetinaSupport();
 //     elastic_out: t => 0.04 * t / (--t) * Math.sin(25 * t)
 // };
 
-// Animation.prototype.start = function () {
+// MorphicAnimation.prototype.start = function () {
 //     // (re-) activate the animation, e.g. if is has previously completed,
 //     // make sure to plug it into something that repeatedly triggers step(),
 //     // e.g. the World's animations queue
@@ -2037,7 +2037,7 @@ enableRetinaSupport();
 //     this.isActive = true;
 // };
 
-// Animation.prototype.step = function () {
+// MorphicAnimation.prototype.step = function () {
 //     if (!this.isActive) {return; }
 //     var now = Date.now();
 //     if (now > this.endTime) {
@@ -4079,7 +4079,7 @@ var TextMorph;
 
 // Morph.prototype.glideTo = function (endPoint, msecs, easing, onComplete) {
 //     var world = this.world(),
-//         horizontal = new Animation(
+//         horizontal = new MorphicAnimation(
 //             x => this.setLeft(x),
 //             () => this.left(),
 //             -(this.left() - endPoint.x),
@@ -4087,7 +4087,7 @@ var TextMorph;
 //             easing
 //         );
 //     world.animations.push(horizontal);
-//     world.animations.push(new Animation(
+//     world.animations.push(new MorphicAnimation(
 //         y => this.setTop(y),
 //         () => this.top(),
 //         -(this.top() - endPoint.y),
@@ -4108,7 +4108,7 @@ var TextMorph;
 //     var world = this.world(),
 //         oldAlpha = this.alpha;
 //     this.children.forEach(child => child.fadeTo(endAlpha, msecs, easing));
-//     world.animations.push(new Animation(
+//     world.animations.push(new MorphicAnimation(
 //         n => {
 //             this.alpha = n;
 //             this.changed();
@@ -9929,7 +9929,7 @@ TriggerMorph.prototype.rootForGrab = function () {
 
 TriggerMorph.prototype.bubbleHelp = function (contents) {
     var world = this.world();
-    this.schedule = new Animation(
+    this.schedule = new MorphicAnimation(
         nop,
         nop,
         0,
@@ -10171,7 +10171,7 @@ MenuItemMorph.prototype.isShowingSubmenu = function () {
 
 MenuItemMorph.prototype.delaySubmenu = function () {
     var world = this.world();
-    this.schedule = new Animation(
+    this.schedule = new MorphicAnimation(
         nop,
         nop,
         0,

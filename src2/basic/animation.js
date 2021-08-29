@@ -28,9 +28,9 @@
 
     are implemented.
 */
-// Animation instance creation:
+// MorphicAnimation instance creation:
 /* global isString,radians */
-class Animation {
+class MorphicAnimation {
     constructor(setter, getter, delta, duration, easing, onComplete) {
         this.setter = setter; // function
         this.getter = getter; // function
@@ -69,7 +69,7 @@ class Animation {
     }
 }
 
-Animation.prototype.easings = {
+MorphicAnimation.prototype.easings = {
     // dictionary of a few pre-defined easing functions used to transition
     // two states
 

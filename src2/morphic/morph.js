@@ -835,7 +835,7 @@ class Morph extends MorphicNode {
     }
     // Morph animating:
     glideTo(endPoint, msecs, easing, onComplete) {
-        var world = this.world(), horizontal = new Animation(
+        var world = this.world(), horizontal = new MorphicAnimation(
             x => this.setLeft(x),
             () => this.left(),
             -(this.left() - endPoint.x),
@@ -843,7 +843,7 @@ class Morph extends MorphicNode {
             easing
         );
         world.animations.push(horizontal);
-        world.animations.push(new Animation(
+        world.animations.push(new MorphicAnimation(
             y => this.setTop(y),
             () => this.top(),
             -(this.top() - endPoint.y),
@@ -862,7 +862,7 @@ class Morph extends MorphicNode {
         // on completion, so I can be recovered
         var world = this.world(), oldAlpha = this.alpha;
         this.children.forEach(child => child.fadeTo(endAlpha, msecs, easing));
-        world.animations.push(new Animation(
+        world.animations.push(new MorphicAnimation(
             n => {
                 this.alpha = n;
                 this.changed();
