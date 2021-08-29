@@ -1,7 +1,4 @@
-// Rectangles //////////////////////////////////////////////////////////
-
-// Rectangle instance creation:
-
+/* global Point */
 class Rectangle {
     constructor(left, top, right, bottom) {
         this.init(new Point((left || 0), (top || 0)),

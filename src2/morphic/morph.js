@@ -29,7 +29,7 @@ var TextMorph;
 
 // Morph instance creation:
 
-class Morph extends Node {
+class Morph extends MorphicNode {
     shadowBlur = 4;
 
     constructor(parent, childrenArray) {

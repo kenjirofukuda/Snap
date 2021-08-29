@@ -28,22 +28,45 @@
 
     are implemented.
 */
-
 // Animation instance creation:
-
-function Animation(setter, getter, delta, duration, easing, onComplete) {
-    this.setter = setter; // function
-    this.getter = getter; // function
-    this.delta = delta || 0; // number
-    this.duration = duration || 0; // milliseconds
-    this.easing = isString(easing) ? // string or function
+/* global isString,radians */
+class Animation {
+    constructor(setter, getter, delta, duration, easing, onComplete) {
+        this.setter = setter; // function
+        this.getter = getter; // function
+        this.delta = delta || 0; // number
+        this.duration = duration || 0; // milliseconds
+        this.easing = isString(easing) ? // string or function
             this.easings[easing] || this.easings.sinusoidal
-                : easing || this.easings.sinusoidal;
-    this.onComplete = onComplete || null; // optional callback
-    this.endTime = null;
-    this.destination = null;
-    this.isActive = false;
-    this.start();
+            : easing || this.easings.sinusoidal;
+        this.onComplete = onComplete || null; // optional callback
+        this.endTime = null;
+        this.destination = null;
+        this.isActive = false;
+        this.start();
+    }
+    start() {
+        // (re-) activate the animation, e.g. if is has previously completed,
+        // make sure to plug it into something that repeatedly triggers step(),
+        // e.g. the World's animations queue
+        this.endTime = Date.now() + this.duration;
+        this.destination = this.getter.call(this) + this.delta;
+        this.isActive = true;
+    }
+    step() {
+        if (!this.isActive) { return; }
+        var now = Date.now();
+        if (now > this.endTime) {
+            this.setter(this.destination);
+            this.isActive = false;
+            if (this.onComplete) { this.onComplete(); }
+        } else {
+            this.setter(
+                this.destination -
+                (this.delta * this.easing((this.endTime - now) / this.duration))
+            );
+        }
+    }
 }
 
 Animation.prototype.easings = {
@@ -77,26 +100,5 @@ Animation.prototype.easings = {
     elastic_out: t => 0.04 * t / (--t) * Math.sin(25 * t)
 };
 
-Animation.prototype.start = function () {
-    // (re-) activate the animation, e.g. if is has previously completed,
-    // make sure to plug it into something that repeatedly triggers step(),
-    // e.g. the World's animations queue
-    this.endTime = Date.now() + this.duration;
-    this.destination = this.getter.call(this) + this.delta;
-    this.isActive = true;
-};
 
-Animation.prototype.step = function () {
-    if (!this.isActive) {return; }
-    var now = Date.now();
-    if (now > this.endTime) {
-        this.setter(this.destination);
-        this.isActive = false;
-        if (this.onComplete) {this.onComplete(); }
-    } else {
-        this.setter(
-            this.destination -
-                (this.delta * this.easing((this.endTime - now) / this.duration))
-        );
-    }
-};
+

@@ -525,7 +525,7 @@ IDE_Morph.prototype.openIn = function (world) {
                     projectData => {
                         var msg;
                         this.nextSteps([
-                            () => msg = this.showMessage('Opening project...'),
+                            () => msg = this.showMessage('roject...'),
                             () => {
                                 if (projectData.indexOf('<snapdata') === 0) {
                                     this.rawOpenCloudDataString(projectData);
@@ -564,7 +564,7 @@ IDE_Morph.prototype.openIn = function (world) {
                 projectData => {
                     var msg;
                     myself.nextSteps([
-                        () => msg = myself.showMessage('Opening project...'),
+                        () => msg = myself.showMessage('roject...'),
                         () => {
                             if (projectData.indexOf('<snapdata') === 0) {
                                 myself.rawOpenCloudDataString(projectData);
@@ -601,7 +601,7 @@ IDE_Morph.prototype.openIn = function (world) {
                 projectData => {
                     var msg;
                     myself.nextSteps([
-                        () => msg = myself.showMessage('Opening project...'),
+                        () => msg = myself.showMessage('roject...'),
                         () => {
                             if (projectData.indexOf('<snapdata') === 0) {
                                 myself.rawOpenCloudDataString(projectData);

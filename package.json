@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
-    "postcompile": "sh ./posttsc.sh"
+    "postcompile": "sh ./posttsc.sh",
+    "dts": "npx typescript src2/**/*.js --declaration --allowJs --emitDeclarationOnly --outDir types"
   },
   "repository": {
     "type": "git",
