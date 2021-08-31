@@ -4,3 +4,4 @@
 node_modules
 sandbox
 types_
+tools/*.js

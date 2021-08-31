@@ -7,6 +7,7 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
+import { read_lines_from_file, write_lines_to_file } from './mylib';
 
 const STRIP_ENDS_MORPH = true;
 
@@ -31,13 +32,10 @@ if (!fs.existsSync(input_path)) {
 }
 console.log(`found: ${input_path}`);
 
-const read_file_lines = (filename: string) =>
-  fs.readFileSync(filename).toString('utf8').split('\n');
-
 let current_buf = new Array<string>();
 let current_key = `${input_base}_head`;
 const all_map: StringToLinesMap = {};
-const all_lines = read_file_lines(input_path);
+const all_lines = read_lines_from_file(input_path);
 
 all_lines.forEach((line: string) => {
   const split_tag = get_split_tag_from(line);
@@ -51,12 +49,20 @@ all_lines.forEach((line: string) => {
 });
 all_map[current_key] = current_buf;
 
+const all_paths: string[] = [];
+const output_dir = `./sandbox/_splitresult/${input_base}/`;
 for (let basename in all_map) {
   console.log(`***** ${basename} ***`);
   console.log(`${all_map[basename].length}`);
-  const output_path = `./sandbox/_splitresult/${input_base}/${basename}.js`;
+  const output_path = path.join(output_dir, `${basename}.js`).replace(/\\/g, '/');
+  all_paths.push(output_path);
   write_lines_to_file(all_map[basename], output_path);
 }
+const html_scripts = all_paths.map((each) => {
+  return `<script src="${each}"></script>`;
+});
+const partial_html_file = path.join(output_dir, '_script_tag_hint.txt');
+write_lines_to_file(html_scripts, partial_html_file);
 
 function get_split_tag_from(s: string): string | '' {
   const matchArray = s.match(/(\/\/) ([\w ]+) (\/\/\/+)/);
@@ -69,15 +75,4 @@ function basename_from_split_tag(tag: string): string {
     basename = basename.substring(0, basename.length - 'Morph'.length);
   }
   return basename.replace(/ /g, '-').toLowerCase();
-}
-
-function write_lines_to_file(lines: string[], out_path: string): void {
-  const output_folder_path = path.dirname(out_path);
-  fs.mkdirSync(output_folder_path, { recursive: true });
-  const fd = fs.openSync(out_path, 'w');
-  lines.forEach((line) => {
-    fs.writeSync(fd, line);
-    fs.writeSync(fd, '\n');
-  });
-  fs.closeSync(fd);
 }
