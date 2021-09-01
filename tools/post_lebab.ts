@@ -1,36 +1,45 @@
 import * as fs from 'fs';
-import * as path from 'path';
-import * as mylib_1 from './mylib';
+import { read_lines_from_file } from './mylib';
 const espree = require('espree');
+
+type EspreeNode = {
+  type: string;
+  start: number;
+  end: number;
+  body?: EspreeNode;
+  superClass?: EspreeNode;
+  id?: EspreeNode;
+  key?: EspreeNode;
+  value?: EspreeNode;
+  arguments?: EspreeNode[];
+  name?: string;
+};
+
 if (process.argv.length < 3) {
   console.error('input file not specified');
   for (let i = 0; i < process.argv.length; i++) {
-    console.log('argv[' + i + '] = ' + process.argv[i]);
+    console.log(`argv[${i}] = ${process.argv[i]}`);
   }
   process.exit(1);
 }
-var input_path = process.argv[2];
+
+const input_path = process.argv[2];
+
 if (!fs.existsSync(input_path)) {
-  console.warn('file not found: ' + input_path);
+  console.warn(`file not found: ${input_path}`);
   process.exit(1);
 }
-console.log('found: ' + input_path);
-var lines = mylib_1.read_lines_from_file(input_path);
+console.log(`found: ${input_path}`);
 
-// const tokens = espree.tokenize(lines.join('\n'), {
-//   ecmaVersion: 'latest',
-// });
-// console.log(tokens);
-
+const lines = read_lines_from_file(input_path);
 const code = lines.join('\n');
 const ast = espree.parse(code, { ecmaVersion: 'latest' });
-// mylib_1.write_lines_to_file(
-//   [JSON.stringify(ast, null, 2)],
-//   mylib_1.path_join(path.dirname(input_path), path.basename(input_path, '.js')) +
-//     '.json'
-// );
 
-function find_node(node: object, key: string, value: string): object | null {
+function find_node(
+  node: EspreeNode,
+  key: string,
+  value: string
+): EspreeNode | null {
   const col_result = [];
   primitive_find_nodes(
     node,
@@ -48,23 +57,23 @@ function find_node(node: object, key: string, value: string): object | null {
 }
 
 function primitive_find_nodes(
-  node: object,
-  filter: (each: object) => boolean,
-  col_result: object[],
+  node: EspreeNode | EspreeNode[],
+  filter: (each: EspreeNode) => boolean,
+  col_result: EspreeNode[],
   once = false
 ) {
-  if (filter(node)) {
-    col_result.push(node);
-    if (once) {
-      return;
-    }
-  }
   if (node instanceof Array) {
     console.log('inside array direct');
-    for (let i in node) {
-      const aNode = node[i];
+    for (const aNode of node) {
       primitive_find_nodes(aNode, filter, col_result, once);
       if (once && col_result.length > 0) {
+        return;
+      }
+    }
+  } else {
+    if (filter(node)) {
+      col_result.push(node);
+      if (once) {
         return;
       }
     }
@@ -90,8 +99,10 @@ function primitive_find_nodes(
   }
 }
 
-const find_constructor = (node: object) => find_node(node, 'kind', 'constructor');
-const find_member_expr = (node: object) => find_node(node, 'type', 'MemberExpression');
+const find_constructor = (node: EspreeNode) =>
+  find_node(node, 'kind', 'constructor');
+const find_member_expr = (node: EspreeNode) =>
+  find_node(node, 'type', 'MemberExpression');
 
 const constructor_node = find_constructor(ast);
 console.log(constructor_node);
@@ -103,7 +114,7 @@ const member_node = find_member_expr(init_node);
 console.log(member_node);
 console.log('');
 
-function node_indent(node: object) {
+function node_indent(node: EspreeNode) {
   let spc = 0;
   for (let i = node.start - 1; i >= 1; i--) {
     const ch = code.substring(i - 1, i);
@@ -141,12 +152,12 @@ if (class_decl_node.superClass) {
   console.log(`superClass[${class_decl_node.superClass.name}]`);
 }
 
-function force_self_init_call(class_node: object) {
+function force_self_init_call(class_node: EspreeNode) {
   const original_args = find_node(
     class_node,
     'type',
     'CallExpression'
-  ).arguments.map((each: { name: any; }) => {
+  ).arguments.map((each: EspreeNode) => {
     return each.name;
   });
 
@@ -159,7 +170,7 @@ function force_self_init_call(class_node: object) {
 }
 console.log(force_self_init_call(class_decl_node));
 
-const method_nodes = [];
+const method_nodes: EspreeNode[] = [];
 primitive_find_nodes(
   class_decl_node,
   (aNode) => {
