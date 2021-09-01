@@ -16,3 +16,7 @@ export function write_lines_to_file(lines: string[], out_path: string): void {
   });
   fs.closeSync(fd);
 }
+
+export function path_join(...args: string[]): string{
+  return path.join(...args).replace(/\\/g, '/');
+}

@@ -7,9 +7,10 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import { read_lines_from_file, write_lines_to_file } from './mylib';
+import { path_join, read_lines_from_file, write_lines_to_file } from './mylib';
 
 const STRIP_ENDS_MORPH = true;
+const TOP_DIR = path_join('sandbox', '_splitresult');
 
 type StringToLinesMap = {
   [name: string]: Array<string>;
@@ -50,18 +51,18 @@ all_lines.forEach((line: string) => {
 all_map[current_key] = current_buf;
 
 const all_paths: string[] = [];
-const output_dir = `./sandbox/_splitresult/${input_base}/`;
+const output_dir = path_join(TOP_DIR, input_base);
 for (let basename in all_map) {
   console.log(`***** ${basename} ***`);
   console.log(`${all_map[basename].length}`);
-  const output_path = path.join(output_dir, `${basename}.js`).replace(/\\/g, '/');
+  const output_path = path_join(output_dir, `${basename}.js`);
   all_paths.push(output_path);
   write_lines_to_file(all_map[basename], output_path);
 }
 const html_scripts = all_paths.map((each) => {
   return `<script src="${each}"></script>`;
 });
-const partial_html_file = path.join(output_dir, '_script_tag_hint.txt');
+const partial_html_file = path.join(output_dir, '_script_tags.html');
 write_lines_to_file(html_scripts, partial_html_file);
 
 function get_split_tag_from(s: string): string | '' {

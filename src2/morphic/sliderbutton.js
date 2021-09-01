@@ -1,7 +1,8 @@
+/* global Color, radians, MorphicPreferences, nop */
 class SliderButtonMorph extends CircleBoxMorph {
     constructor(orientation) {
         super(orientation);
-        this.init(orientation);
+        SliderButtonMorph.prototype.init.call(this, orientation);
     }
     init(orientation) {
         this.color = new Color(80, 80, 80);
