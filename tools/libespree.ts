@@ -35,6 +35,15 @@ export class EspeeCenter {
     return this.code.substring(node.start, node.end);
   }
 
+  classNames(): string[] {
+    const classNodes = find_nodes(this.ast, (aNode) => {
+      return aNode.type === 'ClassDeclaration';
+    });
+    return classNodes.map((each) => {
+      return each.id.name;
+    });
+  }
+
   /**
    * get space for target node indent.
    *
