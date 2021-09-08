@@ -1,5 +1,6 @@
 {
     "eslint.workingDirectories": [
    "./src2" 
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }
