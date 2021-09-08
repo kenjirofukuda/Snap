@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { EspeeCenter, EspreeNode, find_node, find_nodes } from './libespree';
+import { write_lines_to_file } from './mylib';
 
 const debug = false;
 
@@ -23,24 +24,20 @@ if (debug) {
 
 const ec = new EspeeCenter(inputPath);
 
-const classDeclNode = find_node(ec.ast, 'type', 'ClassDeclaration');
-if (!classDeclNode) {
+if (!ec.classNode()) {
   console.warn('class not found. no needs patch.');
   process.exit(1);
 }
-const className = classDeclNode.id.name;
 
 if (debug) {
-  console.log(`class[${className}]`);
+  console.log(`class[${ec.className()}]`);
 }
-let superClassName = '';
-if (classDeclNode.superClass) {
-  superClassName = classDeclNode.superClass.name;
+if (ec.superClassName()) {
   if (debug) {
-    console.log(`superClass[${superClassName}]`);
+    console.log(`superClass[${ec.superClassName()}]`);
   }
 }
-if (superClassName === '') {
+if (ec.superClassName() === '') {
   console.warn('no super class. no needs patch.');
   process.exit(1);
 }
@@ -69,7 +66,7 @@ if (debug) {
   console.log('');
 }
 
-const replaceInitCall = force_self_init_call(classDeclNode);
+const replaceInitCall = force_self_init_call(ec.classNode());
 
 const replacedConstructorCode = [
   ec.indentSpaces(constructorNode),
@@ -81,10 +78,12 @@ const replacedConstructorCode = [
 ]
   .join('')
   .replace(/;/g, ';\n');
-console.log(replacedConstructorCode);
-console.log('');
+if (debug) {
+  console.log(replacedConstructorCode);
+  console.log('');
+}
 
-const methodNodes = find_nodes(classDeclNode, (aNode) => {
+const methodNodes = find_nodes(ec.classNode(), (aNode) => {
   return aNode['type'] === 'MethodDefinition';
 });
 
@@ -107,7 +106,7 @@ const uberCalls = find_nodes(initDefNode, (aNode) => {
     if (aNode.object && aNode.property) {
       if (aNode.object.name && aNode.property.name) {
         return (
-          aNode.object.name === className && aNode.property.name === 'uber'
+          aNode.object.name === ec.className() && aNode.property.name === 'uber'
         );
       }
     }
@@ -129,8 +128,10 @@ const uberExprs = find_nodes(initDefNode, (aNode) => {
   );
 });
 const originalUberInit = ec.str(uberExprs[0]);
-console.log(originalUberInit);
-console.log('');
+if (debug) {
+  console.log(originalUberInit);
+  console.log('');
+}
 
 const uberArgs = find_node(
   uberExprs[0],
@@ -155,8 +156,10 @@ const replacedInitDefCode = [
   replacedSuperCallCode,
   ec.code.substring(uberExprs[0].end + 1, initDefNode.end),
 ].join('');
-console.log(replacedInitDefCode);
-console.log('');
+if (debug) {
+  console.log(replacedInitDefCode);
+  console.log('');
+}
 
 /**
  * change init call form
@@ -173,7 +176,7 @@ function force_self_init_call(class_node: EspreeNode) {
     'type',
     'CallExpression'
   ).arguments.map((each: EspreeNode) => {
-    return each.name;
+    return ec.str(each);
   });
 
   return [
@@ -183,3 +186,15 @@ function force_self_init_call(class_node: EspreeNode) {
     ');',
   ].join('');
 }
+
+const newSourceCode = [
+  ec.code.substring(0, constructorNode.start - 1),
+  replacedConstructorCode,
+  '\n',
+  ec.indentSpaces(initDefNode),
+  replacedInitDefCode, 
+  '\n',
+  ec.code.substring(initDefNode.end + 1, ec.code.length),
+].join('');
+
+write_lines_to_file([newSourceCode], inputPath);

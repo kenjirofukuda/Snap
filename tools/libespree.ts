@@ -23,6 +23,9 @@ export class EspeeCenter {
   readonly lines: string[];
   readonly code: string;
   readonly ast: EspreeNode;
+  _classNode?: EspreeNode;
+  _constructorNode?: EspreeNode;
+  _methodNodes?: EspreeNode[];
 
   constructor(path: string) {
     this.path = path;
@@ -60,6 +63,63 @@ export class EspeeCenter {
       spc++;
     }
     return ' '.repeat(spc);
+  }
+
+  classNode(): EspreeNode | null {
+    if (this._classNode === undefined) {
+      this._classNode = find_node(this.ast, 'type', 'ClassDeclaration');
+    }
+    return this._classNode;
+  }
+
+  constructorNode(): EspreeNode {
+    if (this._constructorNode === undefined) {
+      if (this.classNode()) {
+        this._constructorNode = find_node(
+          this.classNode(),
+          'type',
+          'ClassDeclaration'
+        );
+      }
+    }
+    return this._constructorNode;
+  }
+
+  methodNodes(): EspreeNode[] {
+    if (this._methodNodes === undefined) {
+      if (this.classNode()) {
+        this._methodNodes = find_nodes(
+          this.classNode(),
+          (aNode) => aNode['type'] === 'MethodDefinition'
+        );
+      }
+    }
+    return this._methodNodes;
+  }
+  
+  methodNames(): string[] {
+    return this.methodNodes().map((aNode) => aNode.key.name);
+  }
+
+  /**
+   *
+   * @returns '' if no class
+   */
+  className(): string {
+    if (this.classNode() === null) {
+      return '';
+    } else {
+      return this.classNode().id.name;
+    }
+  }
+
+  superClassName(): string {
+    if (this.classNode()) {
+      if (this.classNode().superClass) {
+        return this.classNode().superClass.name;
+      }
+    }
+    return '';
   }
 }
 

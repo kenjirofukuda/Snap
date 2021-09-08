@@ -46,7 +46,7 @@ ES2015 class 化を行い、記法の近代化を行います。
 lebab \
   --replace "./sandbox/_splitresult/morphic/*.converted.js" \
   --transform class,arrow,arrow-return,for-of,for-each,\
-arg-rest,arg-spread,obj-method,multi-var
+arg-rest,arg-spread,obj-method,multi-var,let
 ```
 
 
